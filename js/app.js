@@ -6,3 +6,14 @@ blog.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/profile', {templateUrl: '/html/profile.html'});
   $routeProvider.otherwise({redirectTo: '/'});
 }]);
+
+angular.bootstrap(document, ['blog']);
+
+// Navigation
+var NavCtrl = function($scope, $location) {
+  $scope.location = $location; 
+  $scope.$watch('location.path()', function(path) {
+    console.log(path);
+    $scope.path = path;
+  });
+};
