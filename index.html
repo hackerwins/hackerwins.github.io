@@ -4,8 +4,19 @@
   <meta charset="UTF-8">
   <title>Hackerwins Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- styles -->
+  <style type="text/css">
+    body {
+      font-family: NanumGothic, 나눔고딕, Helvetica Neue;
+      padding-top: 50px;
+    }
+    .nav-container .navbar-googlenav .btn-navbar .icon-bar {
+        margin-top: 3px;
+    }
+  </style>
   <!-- libs -->
   <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.min.css">
+  <link href="/libs/bootstrap/css/bootstrap-responsive.css" rel="stylesheet"> 
   <link rel="stylesheet" href="/libs/google-bootstrap/css/google-bootstrap.css"> 
   <link rel="stylesheet" href="/libs/Font-Awesome/css/font-awesome.min.css"> 
   
@@ -29,17 +40,6 @@
   <![endif]-->
   <script src="/libs/angular-ui/build/angular-ui.min.js"></script>
   <link rel="stylesheet" href="/libs/angular-ui/build/angular-ui.min.css" />
-
-  <!-- styles -->
-  <style type="text/css">
-    body {
-      font-family: NanumGothic, 나눔고딕, Helvetica Neue;
-      padding-top: 50px;
-    }
-    .nav-container .navbar-googlenav .btn-navbar .icon-bar {
-        margin-top: 3px;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -58,7 +58,7 @@
               <div class="nav-collapse collapse">
                 <ul class="nav">
                   <li ng-class="{'/':'active'}[path]"><a href="#"><i class="icon-comments"></i> 글 목록</a></li>
-                  <li ng-class="{'/profile':'active'}[path]"><a href="#/profile"><i class="icon-github-alt"/></i> 이력서</a></li>
+                  <li ng-class="{'/profile':'active'}[path]"><a href="#/profile"><i class="icon-github-alt"/></i> 주인장</a></li>
                 </ul>
               </div>
             </div>
