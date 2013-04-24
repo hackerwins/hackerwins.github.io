@@ -13,7 +13,6 @@ angular.bootstrap(document, ['blog']);
 var NavCtrl = function($scope, $location) {
   $scope.location = $location; 
   $scope.$watch('location.path()', function(path) {
-    console.log(path);
     $scope.path = path;
   });
 };

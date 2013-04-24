@@ -1,4 +1,50 @@
 <div class="container">
+  <section id="code03">
+    <h4>Code 03. 스프레드시트 수식 평가시 참조처리</h4>
+    <h5>수식 참조(Reference)란?</h5>
+    <p>셀의 수식을 계산하는 것은 참조(Reference)를 처리 하는 것이 핵심이다.</p>
+    <p class="text-center"><img src="img/simple-reference.png" /></p>
+    <p class="text-center">그림 1. 단순한 참조</p>
+    <p>'그림1. 단순한 참조'처럼 B3셀의 수식 'sum(a1:a3)'을 평가하기 전에 B3셀이 참조하고 있는 A1, A2, A3가 평가되어서 값을 얻을 수 있어야한다.  수식 참조를 단순하게 생각하면 트리를 연상할 수 있으나 실제로는 노드끼리 연결된 체인(chain)의 형태를 띈다.</p>
+    <p class="text-center"><img src="img/complex-reference.png" /></p>
+    <p class="text-center">그림 2. 복잡한 참조</p>
+    <p>'그림2. 복잡한 참조'를 살펴보면 체인이 복잡하게 연결되어 있는 것을 볼 수 있다.</p>
+    <p class="text-center"><img src="img/circular-reference.png" /></p>
+    <p class="text-center">그림 3. 순환 참조</p>
+    <p>'그림3. 순환 참조'는 참조하는 셀끼리 서로 연결된 형태를 띈 순환 참조를 나타낸다. 순환 참조의 경우 값을 평가하러 갔을때 다시 원래 셀로 돌아오는 무한 루프에 빠진다.</p>
+    <h5>네이버셀의 계산(calculation) 방식</h5>
+    <p>네이버셀의 계산처리 순서는 다음과 같다.</p>
+    <ol>
+      <li>참조 의존성 맵(makeDependantMap)을 만든다.</li>
+      <li>참조 의존성 맵을 입력받아 계산 체인(calcChain)을 만든다.</li>
+      <li>계산 체인에 들어있는 순서대로 셀을 평가한다.</li>
+    </ol>
+    <p class="text-center"><img src="img/complex-reference-changeD1.png" /></p>
+    <p class="text-center">그림 4. C1셀 변경시 계산</p>
+    <p>'그림4. C1셀 변경시 계산'을 예를 들어 생각해보자.</p>
+    <p> 1. 의존성 맵 생성</p>
+    <p> 계산 체인에 사용할 의존성 맵을 만든다.</p>
+    <table class="table table-condensed table-striped table-bordered" style="width:200px;margin:auto;">
+      <thead>
+        <tr><th>셀</th><th>참조하는 셀</th></tr>
+      </th>
+      <tbody>
+        <tr><td>A2</td><td>[D1, B3]</td></tr>
+        <tr><td>A3</td><td>[B3, C1]</td></tr>
+        <tr><td>B3</td><td>[D1, C1]</td></tr>
+        <tr><td>B4</td><td>[C1, C2]</td></tr>
+        <tr><td>C1</td><td>[D1, C2]</td></tr>
+      </body>
+    </table>
+    <p class="text-center">그림 5. 의존성 맵</p>
+    <p> 2. 계산 체인(calcChain) 만들기</p>
+    <p> 변경된 셀별로 계산 체인을 만든다. 이 작업의 결과로 나오는 계산 체인은 먼저 계산 순서대로 정렬되어 있다.</p>
+    <p>C1의 수식을 A2+B3+B4로 변경한 뒤 C1의 값을 평가하기 위해서는 C1에 직접 연결된 A2, B3, B4의 값이 필요하다. 하지만 이번 변경(계산)에서는 이들이 변경되지 않았으므로 이미 평가되어 있다고 가정할 수 있다. C1의 값이 변경된 뒤에 평가해야할 셀들은 D1과 C2다. 따라서 C1의 계산 체인은 [D1, C2]가 될 수 있다. D1과 C2는 서로 의존성을 갖고 있지 않으므로 서로 순서에 상관 없다.</p>
+    <p>하지만 B3가 변경 되었을 때 B3의 계산 체인에는 [C1, D1, C2] 사이에는 순서가 중요하다. D1이나 C2보다 C1이 먼저 평가 되어야 한다. 계산 체인을 만드는 알고리즘은 <a href="http://en.wikipedia.org/wiki/Topological_sorting">Topological Sorting</a> 참고.</p>
+    <p> 3. 정렬된 계산 체인을 순서대로 평가하기</p>
+    <p>계산 체인을 이제 순서대로 평가한다.</p>
+  </section>
+  <hr/>
   <section id="code02">
     <h4>Code 02. Operational Transformation node.js</h4>
     <iframe src="http://www.slideshare.net/slideshow/embed_code/15306209" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen webkitallowfullscreen mozallowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/youngteac/operational-transformation-in-nodejs" title="Operational Transformation in node.js" target="_blank">Operational Transformation in node.js</a> </strong> from <strong><a href="http://www.slideshare.net/youngteac" target="_blank">Youngteac Hong</a></strong> </div> 
