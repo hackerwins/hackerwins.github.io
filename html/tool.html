@@ -1,0 +1,90 @@
+<div class="container">
+  <style type="text/css"> 
+    <!--
+    pre { white-space: pre-wrap; padding: 5px; font-family: monospace; color: #d7d7d7; background-color: #121212; }
+    * { font-size: 1em; }
+    .Type { color: #ffaf5f; }
+    .LineNr { color: #5f5f5f; background-color: #121212; padding-bottom: 1px; }
+    .Constant { color: #d75f5f; }
+    .Function { color: #ffd787; }
+    .Statement { color: #8787af; }
+    -->
+  </style>
+  <section id="tool01">
+    <h4>Tool 01. IE 프로파일링</h4>
+    <p>클라이언트는 자바스크립트로 구현되었으므로 Browser 개발자도구에 포함되어 있는 프로파일러를 사용한다.</p>
+    <p>주로 IE9(Internet Explorer 9) 프로파일러를 사용했으며 실행했을때 화면은 다음과 같다.</p>
+    <p class="text-center"><img src="/img/ie_dev_tool.png" /></p>
+    <p class="text-center">그림1. IE 9 개발자 도구 (함수 뷰)</p>
+    <p> 이 화면은 프로파일러>'함수'를 텝을 누르면 볼수 있는 리포트의 결과이다. 여기서 주목해서 봐야할 것은 함수의 '수', '포괄 시간', '제외 시간'이다.</p>
+    <ul>
+      <li> 수(Invocation Count) : 함수를 호출한 수.</li>
+      <li> 포괄 시간 : 함수의 내부 호출을 포함한 전체 실행 시간.</li>
+      <li> 제외 시간 : 함수의 내부 호출을 제외한 함수 자체 실행 시간(이 함수가 호출한 내부함수의 실행시간을 포함하지 않음).</li>
+    </ul>
+    <h6>속도개선 포인트</h6>
+    <p>호출수에 비해 의외로 많은 제외 시간을 갖은 함수의 사용을 자제한다. 예를 들어 '그림1'의 scrollTop의 경우 호출 수는 623번 밖에 안되나 많은 제외 시간(180.01 ms)을 차지하고 있다. IE9에서 scrollTop의 경우 다른 브라우저에 비해 지나치게 많은 제외 시간을 갖고 있다.</p>
+    <p>스크롤의 경우 마이크로타임으로 매번 호출하지 않고 조금 지연시켜서 실행해도 되므로 다음과 같이 지연시켜 실행한다.</p>
+    <pre>
+      <span class="LineNr">1 </span><span class="Statement">if</span>(yAxisChanged){
+      <span class="LineNr">2 </span>  <span class="Type">var</span> fnUpdateScrollPosY = <span class="Function">function</span>(){
+      <span class="LineNr">3 </span>    <span class="Type">this</span>.hScrollCont.scrollTop = szScrollGap.h;
+      <span class="LineNr">4 </span>  }.bind(<span class="Type">this</span>);
+      <span class="LineNr">5 </span>  <span class="Statement">if</span>(<span class="Type">this</span>.scrollPaintYTime){
+      <span class="LineNr">6 </span>    clearTimeout(<span class="Type">this</span>.scrollPaintYTime);
+      <span class="LineNr">7 </span>  }
+      <span class="LineNr">8 </span>  <span class="Type">this</span>.scrollPaintYTime = setTimeout(fnUpdateScrollPosY, <span class="Constant">100</span>);
+      <span class="LineNr">9 </span>}
+    </pre>
+    <p class="text-center">그림2. scrollTop 지연실행</p>
+    <p><strong>*) 주로 브라우저에 영향을 많이 받는다.</strong></p>
+    <p>의외로 많이 호출된 함수가 왜 그렇게 많이 호출되었는지 생각한다. 실제 불필요한 함수 호출이 있지는 않았는지 생각하며 함수 호출의 위치를 적절히 조절한다. 예를 들어 다음 코드의 경우 Loop안에서 aDimCol을 만들고 있다(Line 5).</p>
+    <pre>
+      <span class="LineNr"> 1 </span><span class="Type">var</span> aRngWindowGrid = <span class="Type">this</span>.getRngWindowGrids();
+      <span class="LineNr"> 2 </span><span class="Type">var</span> aWindowRow = aRngWindowGrid.map(cell.util.getRowsFromRng).flatten().unique();
+      <span class="LineNr"> 3 </span>
+      <span class="LineNr"> 4 </span>aWindowRow.each(<span class="Function">function</span>(r){
+      <span class="LineNr"> 5 </span>  <span class="Type">var</span> aDimCol = cell.util.getColumnsFromRng(cell.base.getRngDimension());
+      <span class="LineNr"> 6 </span>  aDimCol.each(<span class="Function">function</span>(c){
+      <span class="LineNr"> 7 </span>    <span class="Type">var</span> ref = {<span class="Statement">r</span>:r, <span class="Statement">c</span>:c};
+      <span class="LineNr"> 8 </span>    <span class="Type">var</span> oCell = cell.base.getCellWithoutCreation(ref);
+      <span class="LineNr"> 9 </span>    <span class="Statement">if</span>(oCell){
+      <span class="LineNr">10 </span>      <span class="Type">this</span>.updateCell(ref);
+      <span class="LineNr">11 </span>    }<span class="Statement">else</span>{
+      <span class="LineNr">12 </span>      <span class="Type">this</span>.setCellStyle(ref);
+      <span class="LineNr">13 </span>    }
+      <span class="LineNr">14 </span>  }, <span class="Type">this</span>);
+      <span class="LineNr">15 </span>}, <span class="Type">this</span>);
+    </pre>
+    <p class="text-center">그림3. 불필요한 함수 호출 줄이기 - 수정 전</p>
+    <p>Loop밖에서도 동일한 결과를 낸다면 변수 정의를 밖으로 꺼낸다.</p>
+    <pre id='vimCodeElement'>
+      <span class="LineNr"> 1 </span><span class="Type">var</span> aRngWindowGrid = <span class="Type">this</span>.getRngWindowGrids();
+      <span class="LineNr"> 2 </span><span class="Type">var</span> aWindowRow = aRngWindowGrid.map(cell.util.getRowsFromRng).flatten().unique();
+      <span class="LineNr"> 3 </span><span class="Type">var</span> aDimCol = cell.util.getColumnsFromRng(cell.base.getRngDimension());
+      <span class="LineNr"> 4 </span>
+      <span class="LineNr"> 5 </span>aWindowRow.each(<span class="Function">function</span>(r){
+      <span class="LineNr"> 6 </span>  aDimCol.each(<span class="Function">function</span>(c){
+      <span class="LineNr"> 7 </span>    <span class="Type">var</span> ref = {<span class="Statement">r</span>:r, <span class="Statement">c</span>:c};
+      <span class="LineNr"> 8 </span>    <span class="Type">var</span> oCell = cell.base.getCellWithoutCreation(ref);
+      <span class="LineNr"> 9 </span>    <span class="Statement">if</span>(oCell){
+      <span class="LineNr">10 </span>      <span class="Type">this</span>.updateCell(ref);
+      <span class="LineNr">11 </span>    }<span class="Statement">else</span>{
+      <span class="LineNr">12 </span>      <span class="Type">this</span>.setCellStyle(ref);
+      <span class="LineNr">13 </span>    }
+      <span class="LineNr">14 </span>  }, <span class="Type">this</span>);
+      <span class="LineNr">15 </span>}, <span class="Type">this</span>);
+    </pre>
+    <p class="text-center">그림4. 불필요한 함수 호출 줄이기 - 수정 후</p>
+    <p><strong>*)주로 로직이나 자료형 사용에 오류가 있을때 발생한다.</strong></p>
+    <p class="text-center"><img src="/img/ie_dev_tool_tree.png" /></p>
+    <p class="text-center">그림 5. 개발자도구의 호출 트리 뷰</p>
+    <p>제외 시간은 작지만 포괄 시간이 큰 경우 호출 트리를 살펴보며 원인을 찾는다.</p>
+    <p>그림2를 해석하면 다음과 같다.</p>
+    <ul>
+      <li> 셀의 값을 변경하는 동작인 $ON_EDIT_VALUE의 경우 대부분의 시간을 렌더링(paintSheetdata)에 소모하고 있다.</li>
+      <li> 렌더 함수인 paintSheetdata는 내부 함수인 setCellStyle과 updateCell의 영향을 많이 받는다.</li>
+    </ul>
+    <p><strong>*) 호출 트리는 각 동작별 속도개선에 자주 활용된다.</strong></p>
+  </section>
+</div>
