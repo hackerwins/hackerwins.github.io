@@ -1,4 +1,4 @@
 hackerwins.github.com
 =====================
 
-Hackerwins Blog
+Hackerwins Blog: http://hackerwins.github.io/#/
