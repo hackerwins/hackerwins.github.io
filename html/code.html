@@ -1,4 +1,168 @@
 <div class="container">
+  <section id="code04">
+    <h4>Code 04. 스프레드시트 최적화</h4>
+    <p>네이버셀에 적용한 최적화 작업을 소개한다.</p>
+    <h5>최적화 방식</h5>
+    <ul>
+      <li>데이터의 흐름을 최소화(불필요한 데이터를 흐름에서 제거)</li>
+      <li>느린부분과 빠른부분을 분리</li>
+      <li>큰 비용의 함수와 여러번 반복되는 함수는 캐시</li>
+    </ul>
+    <p>프로그램의 취약한 부분은 추측이 아닌 프로파일링(프로그램 프로파일링)을 통해 찾아내길 권장한다.</p>
+    <p>다음은 계획하거나 실행한 작업목록이다.</p>
+    <ul>
+      <li>부분렌더링(partial rendering)</li>
+      <li>렌더링 최적화(optimize rendering)</li>
+      <li>reflows & repaints 회피(reduce browser reflows & repaints)</li>
+      <li>시트데이타 점진패치(incremental fetch)</li>
+      <li>재계산 최적화(optimize recalculation)</li>
+      <li>DAO 매모리캐시(DAO memory cache)</li>
+    </ul>
+    <p>이 작업 목록들을 데이터흐름에서 시각화하면 다음과 같다.</p>
+    <p class="text-center"><img src="img/dataflow.png" /></p>
+    <p class="text-center">그림1. 데이터 흐름별 최적화</p>
+    <p>그림1의 좌측 녹색 상자는 클라이언트, 우측 붉은 상자는 서버영역이며 작업별 상세 내용에 대해 이어서 살펴보자.</p>
+    <h5>부분 렌더링</h5>
+    <p>문서에 포함되어 있는 수 많은 셀들을 브라우저에 한꺼번에 생성하면 프로그램의 전체적인 체감속도가 느려진다. 실제 셀을 JSON으로 들고 있을때보다 마크업으로 생성하면 브라우저는 시스템 리소스(메모리와 CPU 등)를 상당히 많이 사용한다. 그래서 전체 셀이 아닌 화면에 보이는 셀과 근처에 있는셀(buffer, 상하 각각 100열 씩)만을 생성하도록 렌더러를 수정한다.</p> 
+    <p class="text-center"><img src="img/partial-rendering.png" /></p>
+    <p>그림 2를 보면 사용자가 보고있는 윈도우(Window, 붉은색 상자)와 브라우저에 마크업(Markup)으로 생성한 녹색 영역을 볼 수 있다. 한 시트에 표현할 수 있는 열(col)이 256개로 행(row)에 비해 작으므로 열은 전부 그려준다.</p>
+    <p>그리고 문서 편집과 스크롤 동작시 다음과 같은 처리를 한다.</p>
+    <ul>
+      <li>문서 편집에 의한 셀 변경시(예, 셀 배경색 변경) : 현재 보고 있는 마크업에 해당되는 셀만 다시 표현(repaint)한다.</li>
+      <li>좌-우 스크롤 : 윈도우가 마크업영역을 벗어나지 않으므로 윈도우의 위치만 변경한다.</li>
+      <li>상-하 스크롤 : 윈도우가 마크업영역을 벗어날 수 있으므로 윈도우의 위치를 변경하고 마크업영역도 다시 계산해서 채워넣는다.</li>
+    </ul>
+    <p>상-하 스크롤 동작시 버퍼영역이 세로 병합에 걸칠 경우 버퍼크기를 확장한다. 구글 Docs의 경우 이 때문에 세로 병합의 최대 크기를 500으로 제한한 것으로 보인다.</p>
+    <p><strong>네이버셀은 스크롤시 buffer(그림의 경우 100 row) 없이 즉시 동적으로 생성한다(스크롤 시 매번 painting하지만 buffer에 비해 셀 개수가 더 적어서 더 빠름).</strong></p>
+    <h5>시트데이타 점진패치</h5>
+    <p>클라이언트에서 특정 시트를 선택할 때 선택한 시트가 가지고 있는 전체 셀을 한번에 서버에서 클라이언트로 패치하면 데이터의 양이 많아서 느리다. '그림 1'을 살펴보면 데이터베이스(DB)에 있는 셀 데이터를 실제 사용자가 보고 있는 윈도우(Window)에 표현하기 위해서 데이터의 타입을 변경하는 일이 많다는 것을 알 수 있다.</p>
+    <p>데이터베이스에 있는 셀을 윈도우에 표현하기 위한 데이터 타입 변경과정은 다음과 같다.</p>
+    <ol>
+      <li>DB to Object</li>
+      <li>Object to JSON</li>
+      <li>JSON to JSON (서버-클라이언트 통신)</li>
+      <li>JSON to Markup</li>
+    </ol>
+    <p>데이터의 형을 변경하는 일은 비용이 크므로 형변환을 시킬 데이터를 줄이는 방향으로 작업하는데, '시트데이타 점진패치'로 2번과 3번의 데이터 양을 줄일 수 있다.</p>
+    <p>구글독스 스프레드시트의 동작방식은 다음과 같다.</p>
+    <ul>
+      <li>사용자가 처음 시트를 선택할때 : 200행을 서버에서 fetch해서 Client에 JSON(실제는 Javascript Object)으로 보관한다.</li>
+      <li>사용자가 수직스크롤을 이동해서 아래 데이터가 필요할때 : 1000행을 추가 fetch한다(총 1200행을 Javascript Object로 보관).</li>
+      <li>필요할 경우 1000행씩 추가한다.</li>
+      <li>추가로 한번 읽은 시트데이타는 다시 서버에서 읽지 않는데 이 때문에 구글 Docs 스프레드시트는 한번 읽은 시트로의 이동이 빠르다.</li>
+    </ul>
+    <p><strong>주의 : 네이버셀은 아직 구글에 비해 전체적인 패치 속도가 느려서 추가 패치를 500행으로 줄였다.</strong></p>
+    <h5>렌더링 최적화</h5>
+    <p>부분 렌더링 외에도 렌더러에 다음과 같은 최적화 작업을 진행했다.</p>
+    <ul>
+      <li>페인트함수 세분화</li>
+      <li>화면 기준으로 열 높이 계산 최적화(DOING)</li>
+      <li>reflows & repaints 회피</li>
+    </ul>
+    <h6>페인트함수 세분화</h6>
+    <p>편집이나 이동같은 사용자 이벤트 발생후 화면을 갱신(repaint)하는데, 동작에 따라 필요한 부분만 그리고 싶다면 페인트함수를 세분화 해야 한다.</p>
+    <pre>
+      <span class="LineNr"> 1 </span><span class="Comment">/**</span>
+      <span class="LineNr"> 2 </span><span class="Comment"> * 전체 그리기</span>
+      <span class="LineNr"> 3 </span><span class="Comment"> </span><span class="Comment">*/</span>
+      <span class="LineNr"> 4 </span><span class="Statement">paint</span> : <span class="Function">function</span>(){
+      <span class="LineNr"> 5 </span>  <span class="Type">this</span>.updateGNB();
+      <span class="LineNr"> 6 </span>  <span class="Type">this</span>.paintGrid();
+      <span class="LineNr"> 7 </span>},
+      <span class="LineNr"> 8 </span>
+      <span class="LineNr"> 9 </span><span class="Comment">/**</span>
+      <span class="LineNr">10 </span><span class="Comment"> * 전체 그리드 그리기</span>
+      <span class="LineNr">11 </span><span class="Comment"> </span><span class="Comment">*/</span>
+      <span class="LineNr">12 </span><span class="Statement">paintGrid</span> : <span class="Function">function</span>(){
+      <span class="LineNr">13 </span>  <span class="Type">this</span>.initPaintGrid(<span class="Constant">true</span>);
+      <span class="LineNr">14 </span>  <span class="Type">this</span>.paintLayout();
+      <span class="LineNr">15 </span>  <span class="Type">this</span>.paintQuadGrid();
+      <span class="LineNr">16 </span>  <span class="Type">this</span>.paintGridLines();
+      <span class="LineNr">17 </span>  <span class="Type">this</span>.paintContents();
+      <span class="LineNr">18 </span>},
+      <span class="LineNr">19 </span>
+      <span class="LineNr">20 </span><span class="Comment">/**</span>
+      <span class="LineNr">21 </span><span class="Comment"> * 그리드의 컨텐츠만 그리기</span>
+      <span class="LineNr">22 </span><span class="Comment"> </span><span class="Comment">*/</span>
+      <span class="LineNr">23 </span><span class="Statement">paintContents</span> : <span class="Function">function</span>(){
+      <span class="LineNr">24 </span>  <span class="Type">this</span>.paintSheetdata();
+      <span class="LineNr">25 </span>  <span class="Type">this</span>.updateScrollContentsSize();
+      <span class="LineNr">26 </span>  <span class="Type">this</span>.paintUnhideHandle();
+      <span class="LineNr">27 </span>  <span class="Type">this</span>.paintFilter();
+      <span class="LineNr">28 </span>  <span class="Type">this</span>.paintSelection();
+      <span class="LineNr">29 </span>},
+    </pre>
+    <p>렌더러의 페인트 함수를 이와 같이 세분화한 뒤 작업마다 그려야할 부분을 선택해서 그린다.</p>
+    <pre>
+    <span class="LineNr">1 </span><span class="Comment">/**</span>
+    <span class="LineNr">2 </span><span class="Comment"> * PageDown Key 이동</span>
+    <span class="LineNr">3 </span><span class="Comment"> </span><span class="Comment">*/</span>
+    <span class="LineNr">4 </span>$ON_LEFT : <span class="Function">function</span>(bCtrl, bShift){
+    <span class="LineNr">5 </span>  <span class="Type">this</span>.model.left(bCtrl, bShift);
+    <span class="LineNr">6 </span>  <span class="Type">this</span>.renderer.paintScroll();
+    <span class="LineNr">7 </span>  <span class="Type">this</span>.renderer.paintSelection(bShift);
+    <span class="LineNr">8 </span>  <span class="Type">this</span>.updateSelectionStatus();
+    <span class="LineNr">9 </span>},
+    </pre>
+    <p>이 코드는 단순히 커서를 왼쪽으로 이동하는 함수인데 그리드의 전체를 그릴 필요가 없으므로 커서 선택만 그리는 paintSelection과 스크롤위치만 그리는 paintScroll을 호출한다.</p>
+    <h6>reflows & repaints 회피</h6>
+    <p>브라우저에 표현한 마크업(예: DIV, SPAN, ...)의 스타일이나 내부 내용을 변경할때 브라우저는 화면을 갱신하기위해 reflow 혹은 repaint를 호출한다. 이 작업들은 비용이 크다(참고: <a href="http://www.phpied.com/rendering-repaint-reflowrelayout-restyle/">rendering-repaint-reflowrelayout-restyle</a>).</p>
+    <p>네이버셀에서도 이를 최대한 회피한다.</p>
+    <pre>
+      <span class="LineNr"> 1 </span><span class="Comment">/**</span>
+      <span class="LineNr"> 2 </span><span class="Comment"> * Element에 스타일을 적용. (inline cssText version)</span>
+      <span class="LineNr"> 3 </span><span class="Comment"> * 주의 : 기존의 스타일은 초기화 됨.</span>
+      <span class="LineNr"> 4 </span><span class="Comment"> </span><span class="Comment">*/</span>
+      <span class="LineNr"> 5 </span><span class="Statement">styleElement</span> : <span class="Function">function</span>(element, style) {
+      <span class="LineNr"> 6 </span>  <span class="Statement">if</span>(!element){
+      <span class="LineNr"> 7 </span>    <span class="Statement">throw</span> <span class="String">&quot;IllegalArgumentException&quot;</span>;
+      <span class="LineNr"> 8 </span>  }
+      <span class="LineNr"> 9 </span>  element.style.cssText = <span class="Type">this</span>.getCssTextFromStyle(style);
+      <span class="LineNr">10 </span>},
+      <span class="LineNr">11 </span>
+      <span class="LineNr">12 </span><span class="Comment">/**</span>
+      <span class="LineNr">13 </span><span class="Comment"> * 스타일 객체로부터 cssText 리턴</span>
+      <span class="LineNr">14 </span><span class="Comment"> </span><span class="Comment">*/</span>
+      <span class="LineNr">15 </span><span class="Statement">getCssTextFromStyle</span> : <span class="Function">function</span>(style) {
+      <span class="LineNr">16 </span>  <span class="Type">var</span> aCssText = [];
+      <span class="LineNr">17 </span>  <span class="Statement">for</span> ( <span class="Type">var</span> k <span class="Normal">in</span> style) {
+      <span class="LineNr">18 </span>    <span class="Statement">if</span> (style.hasOwnProperty(k)) {
+      <span class="LineNr">19 </span>      aCssText.push(k + <span class="String">&quot;:&quot;</span> + style[k]);
+      <span class="LineNr">20 </span>    }
+      <span class="LineNr">21 </span>  }
+      <span class="LineNr">22 </span>  <span class="Statement">return</span> aCssText.join(<span class="String">&quot;;&quot;</span>);
+      <span class="LineNr">23 </span>},
+    </pre>
+    <p>한번에 엘리먼트의 스타일을 변경할 수 있는 cssText를 사용하기 위해 이와 같은 유틸을 만들어 사용한다.</p>
+    <p>잦은 스타일링하는 그리드의 셀(Cell)에는 필수다.</p>
+    <pre id='vimCodeElement'>
+      <span class="LineNr">1 </span><span class="Type">var</span> bndActiveCell = <span class="Type">this</span>.getQuadBndFromCellRef(sType, refActiveCell);
+      <span class="LineNr">2 </span><span class="Type">this</span>.styleElement(elActiveCell, {
+      <span class="LineNr">3 </span>  <span class="String">&quot;left&quot;</span> : bndActiveCell.x + <span class="String">&quot;px&quot;</span>,
+      <span class="LineNr">4 </span>  <span class="String">&quot;top&quot;</span> : bndActiveCell.y - <span class="Constant">1</span> + <span class="String">&quot;px&quot;
+      </span>,
+      <span class="LineNr">5 </span>  <span class="String">&quot;width&quot;</span> : bndActiveCell.w - <span class="Constant">3</span> + <span class="String">&quot;px&quot;</span>,
+      <span class="LineNr">6 </span>  <span class="String">&quot;height&quot;</span> : bndActiveCell.h + <span class="String">&quot;px&quot;</span>
+      <span class="LineNr">7 </span>});
+    </pre>
+    <p>이 코드는 셀의 커서를 나타내는 ActiveCell의 위치(left,top)과 크기(width,height)를 한번에 표현한다.</p>
+    <h6>DAO 메모리 캐시</h6>
+    <p>네이버셀과 같이 입출력이 잦은 프로그렘에서 메모리 대신 Database를 사용하는 것은 위험부담이 크다. 특히 수식 재계산(recalculation)이나 행/열 편집 연산의 경우 한번에 사용하는 셀의 양이 많으므로 원활한 속도를 보장하기 어렵다. 데이타 입출력이 많은 SheetDataDAO에 캐시를 적용했다(SheetData의 instance는 그리드의 셀을 나타냄).</p>
+    <p>캐시는 guava의 LoadingCache를 사용한다(사용법은 링크를 참고 : http://code.google.com/p/guava-libraries/wiki/CachesExplained). LoadingCache는 네이버셀에서 Sqlite Connection Pool로도 사용하고 있다.</p>
+    <p>SheetData에 캐시를 적용하면서 겪은 문제/작업은 다음과 같다.</p>
+    <ul>
+      <li>Database와 캐시의 데이터 이원화 문제</li>
+      <li>SheetData 캐시의 점진적인 영역 확장</li>
+    </ul>
+    <p>이원화 문제는 적절한 flush 타임을 잡아 처리한다.</p>
+    <ul>
+      <li>Database에 직접 Access하는 작업에 대해서 전에 flush를 호출</li>
+      <ul><li>저장(save), 내려받기(export), 문서정보(docInfo)</li></ul>
+      <li>마지막 Access로 부터 10분이 지났을 경우 flush(LoadingCache의 기능을 사용)</li>
+      <li>스프링 컨테이너 다운시 flush 호출(flush 메소드에 @PreDestory Annotation 사용)</li>
+    </ul>
+  </section>
+  <hr/>
   <section id="code03">
     <h4>Code 03. 스프레드시트 수식 평가시 참조처리</h4>
     <h5>수식 참조(Reference)란?</h5>
