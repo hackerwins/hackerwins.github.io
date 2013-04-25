@@ -148,7 +148,7 @@
     <p>이 코드는 셀의 커서를 나타내는 ActiveCell의 위치(left,top)과 크기(width,height)를 한번에 표현한다.</p>
     <h6>DAO 메모리 캐시</h6>
     <p>네이버셀과 같이 입출력이 잦은 프로그렘에서 메모리 대신 Database를 사용하는 것은 위험부담이 크다. 특히 수식 재계산(recalculation)이나 행/열 편집 연산의 경우 한번에 사용하는 셀의 양이 많으므로 원활한 속도를 보장하기 어렵다. 데이타 입출력이 많은 SheetDataDAO에 캐시를 적용했다(SheetData의 instance는 그리드의 셀을 나타냄).</p>
-    <p>캐시는 guava의 LoadingCache를 사용한다(사용법은 링크를 참고 : http://code.google.com/p/guava-libraries/wiki/CachesExplained). LoadingCache는 네이버셀에서 Sqlite Connection Pool로도 사용하고 있다.</p>
+    <p>캐시는 guava의 LoadingCache를 사용한다(사용법은 링크를 참고 : <a href="http://code.google.com/p/guava-libraries/wiki/CachesExplained">CachesExplained</a>). LoadingCache는 네이버셀에서 Sqlite Connection Pool로도 사용하고 있다.</p>
     <p>SheetData에 캐시를 적용하면서 겪은 문제/작업은 다음과 같다.</p>
     <ul>
       <li>Database와 캐시의 데이터 이원화 문제</li>
