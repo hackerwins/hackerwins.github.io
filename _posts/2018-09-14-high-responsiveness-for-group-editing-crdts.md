@@ -9,6 +9,7 @@ categories: paper
  - Original paper link: [High Responsiveness for Group Editing CRDTs.](https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf)
 
 ---
+
 ## High Responsiveness for Group Editing CRDTs.
 
 ### 요약
@@ -18,7 +19,7 @@ categories: paper
 
 이 논문은 CRDT의 앞 부분에 “identifier data structure”라는 보조 데이터 타입을 제공해서 upstream 오퍼레이션 처리를 개선하는 방법을 제안함. identifier data structure는 동기화나 복제를 필요로 하지 않음.
 
-identifier data structure를 블록 단위 저장 접근 방식과 함께 사용하면 upstream 실행을 상당히 개선할 수 있다(무시해도 되는 정도의 메모리, 네트워크, downstream 실행 시간이 추가됨).
+identifier data structure를 블록 단위 저장 접근 방식과 함께 사용하면 upstream 실행을 상당히 개선할 수 있음(무시해도 되는 정도의 메모리, 네트워크, downstream 실행 시간이 추가됨).
 
 ### 1. 도입
 
@@ -40,7 +41,7 @@ OT는 upstream의 빠른 응답성으로 공동 편집에 사용되었지만, �
 
 #### Block-wise approach
 
-이를 개선하는 첫 제안은 문자를 하나하나 저장하지 않고 블록 단위로 저장하는 것이었는데, 고유한 identifier를 갖는 요소들이 줄어드므로 선형적인 처리시 유리했고 각 요소가 고유한 identifier와 같이 메타데이터를 갖고 있었으므로 메모리도 작게 사용했다. 하지만 블록으로 연결했다고 하지만 여전히 선형 시간의 복잡도를 갖고 있었다.
+이를 개선하는 첫 제안은 문자를 하나하나 저장하지 않고 블록 단위로 저장하는 것이었는데, 고유한 identifier를 갖는 요소들이 줄어드므로 선형적인 처리시 유리했고 각 요소가 고유한 identifier와 같이 메타데이터를 갖고 있었으므로 메모리도 작게 사용했다. 하지만 블록으로 연결했다고 하지만 여전히 선형 시간의 복잡도를 갖고 있다.
 
 #### Identifier data structure
 
@@ -58,11 +59,11 @@ WOOT에서 identifier는 피어의 아이디와 삽입시 좌우측의 두 앨�
 
 #### 2.3.3 Logoot
 
-어휘 순서를 사용해서 문서의 요소의 순서를 잡는다. identifier는 3개의 정수형 튜플(1: 우선순위, 2: Upstream 피어 ID, 3: Upstream 논리 시계)의 리스트다. identifier는 배열에 저장되며, 새로운 요소 삽입을 위해서는 배열의 shift가 발생한다. (...)
+어휘 순서를 사용해서 문서의 요소의 순서를 잡는다. identifier는 3개의 정수형 튜플(1: 우선순위, 2: Upstream 피어 ID, 3: Upstream 논리 시계)의 리스트다. identifier는 배열에 저장되며, 새로운 요소 삽입을 위해서는 배열의 shift가 발생한다. (생략)
 
 #### 2.3.4 LogootSplit
 
-Logoot의 블록버전 (...)
+Logoot의 블록버전 (생략)
 
 #### 2.3.5 RGA
 
@@ -116,13 +117,14 @@ RGA에서 삽입 오퍼레이션에는 대상 노드의 identifier와 새로운 
 
 ![screen shot 2018-09-10 at 9 38 08 am](/assets/img/2018-09-14-high-responsiven/2c41abd8-b50f-11e8-8d4c-508c65dc57ad)
 
-Identifier 자료구조는 tombstone 노드를 포함하지 않으므로 deletion에는 아무처리를 하지 않고 insertion의 경우 아래와 같은 로직을 수행한다(XXX: 삭제시에도 대상 idNode를 삭제하고 weight를 업데이트 해야할 것 같은데...).
+Identifier 자료구조는 tombstone 노드를 포함하지 않으므로 deletion에는 아무처리를 하지 않고 insertion의 경우 아래와 같은 로직을 수행한다.
+ > (XXX: 삭제시에도 대상 idNode를 삭제하고 weight를 업데이트 해야한다).
 
 ![screen shot 2018-09-10 at 9 51 54 am](/assets/img/2018-09-14-high-responsiven/38e1c12a-b50f-11e8-9473-421d9ffc3083)
 
 #### 3.3 identifier 자료구조 Logoot에 적용
-
 (생략)
+
 ### 4. RGATreeSplit: RGA + 블록화 + identifier 자료구조
 
 논문에서는 RGA가 downstream 실행에 가장 효율적인 알고리즘이고 블록 알고리즘을 적용하면, upstream과 downstream 실행을 모두 개선하므로 identifier 자료구조를 포함한 RGATreeSplit을 제안함.
@@ -206,6 +208,7 @@ splitLink는 identifier와 offset을 기준으로 특정 노드를 찾을 때, �
  - LogootSplitAVL, TreeDoc은 원래의 RGA 알고리즘보다 다운 스트림 성능이 떨어짐
  - RGATreeSplit은 전반적인 성능이 가장 좋음
  - LogootTree는 RGATreeSplit보다 성능이 떨어지지만 블록 관리가 없어도 LogootSplitAVL과 유사한 성능 보임
+
 ### 6. 결론
 
 이 논문에서는 CRDT 알고리즘의 응답성을 향상 시키기 위해서 블록 단위 알고리즘과 log 시간 복잡도를 위한 추가 identifier 자료구조를 제안한다. 특히, 사용자의 수정 사항을 반영하는 upstream 을 크게 개선되므로 체감 속도를 크게 향상된다.
