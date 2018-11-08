@@ -6,3 +6,6 @@ node_modules/*
 
 # linux backup files
 *~
+
+# sass cache
+.sass-cache/*
