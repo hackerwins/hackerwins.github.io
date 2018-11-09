@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-11-08T11:11:09+09:00</updated><id>http://localhost:4000/</id><title type="html">hackerwins blog</title><subtitle>Done is better than perfect.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-11-09T21:08:36+09:00</updated><id>http://localhost:4000/</id><title type="html">hackerwins blog</title><subtitle>Done is better than perfect.
 </subtitle><entry><title type="html">Paper 03. OpSets: Sequential Specifications for Replicated Datatypes (Extended Version). 요약</title><link href="http://localhost:4000/paper/2018/11/08/opsets.html" rel="alternate" type="text/html" title="Paper 03. OpSets: Sequential Specifications for Replicated Datatypes (Extended Version). 요약" /><published>2018-11-08T10:33:00+09:00</published><updated>2018-11-08T10:33:00+09:00</updated><id>http://localhost:4000/paper/2018/11/08/opsets</id><content type="html" xml:base="http://localhost:4000/paper/2018/11/08/opsets.html">&lt;p&gt;“OpSets: Sequential Specifications for Replicated Datatypes (Extended Version).” 공부하면서 정리한 내용&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;Original paper link: &lt;a href=&quot;https://arxiv.org/abs/1805.04263&quot;&gt;link&lt;/a&gt;&lt;/li&gt;
@@ -22,11 +22,13 @@
 
 &lt;p&gt;이 논문은 복제 된 데이터 형식적 의미론(Formal semantics)을 정의하고 동시 데이터 접근 및 조작을 위한 알고리즘에 대한 추론을 위한 새로운 접근 방식, Operation Sets(OpSets for short)를 제안한다. OpSets은 일부 업데이트들이 적용된 후 복제본의 허용된 상태를 정확하게 정의하는 실행 가능한 스팩이다. 이 논문의 공헌은 다음과 같다.&lt;/p&gt;
 
-&lt;p&gt;2절에서는 동시 편집 데이터 구조의 일관성에 대한 지정 및 추론을 위한 간단한 추상화 OpSet을 소개한다.
-3절과 5절에서는 OpSet의 다양한 추상 데이터타입(맵, 세트, 리스트, 텍스트, 그래프, 트리 및 레지스터)를 소개하며, 이 스펙이 간단하고 정확하다는 점에 대해 알아본다.
-4절에서는 OpSet를 사용하여 기존 알고리즘을 추론하는 방법을 알아본다. 이 분야의 선행 연구에서 간과 되어온 협업 텍스트 편집을 위해 중요한 정확성(correctness property)에 대해 살펴본다. 이 논문 저자는 OpSet 스펙이 정확성을 올바르게 정의한 첫 번째라고 주장한다. 텍스트 편집 CRDT에서 정확성을 만족시키지 못하는 몇 가지 다른 사례들을 살펴본다.
-5절에서는 OpSet를 사용하여 새로운 복제 된 데이터타입을 개발하는 방법에 대해 알아본다. 특히 트리 CRDT에서 원자 이동 연산을 정의하는 방법을 소개한다. 이 작업은 트리 내의 새 위치로 하위 트리를 이동하거나 맵에서 키의 이름을 바꾸거나 리스트에서 항목의 순서를 변경하는 데 사용할 수 있다. OpSets 접근 방식은 그 동안 잠금장치(Lock) 없이 구현할 수 없던 작업을 간단하게 정의할 수 있다.
-Isabelle/HOL 증명 도구를 사용하여 OpSets를 공식화하고 이 논문의 주요 주장의 정확성에 대한 기계화 된 증명을 산출한다. 특히 공동 텍스트 편집의 최근 스펙인 Attiya 보다 더 엄격하게 입증한다. 기계화 된 교정을 사용함으로써 이전의 비공식적 인 접근 방법의 모호성 없이 텍스트 수정에서 발생할 수있는 추론 오류를 배제한다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;2절에서는 동시 편집 데이터 구조의 일관성에 대한 지정 및 추론을 위한 간단한 추상화 OpSet을 소개한다.&lt;/li&gt;
+  &lt;li&gt;3절과 5절에서는 OpSet의 다양한 추상 데이터타입(맵, 세트, 리스트, 텍스트, 그래프, 트리 및 레지스터)를 소개하며, 이 스펙이 간단하고 정확하다는 점에 대해 알아본다.&lt;/li&gt;
+  &lt;li&gt;4절에서는 OpSet를 사용하여 기존 알고리즘을 추론하는 방법을 알아본다. 이 분야의 선행 연구에서 간과 되어온 협업 텍스트 편집을 위해 중요한 정확성(correctness property)에 대해 살펴본다. 이 논문 저자는 OpSet 스펙이 정확성을 올바르게 정의한 첫 번째라고 주장한다. 텍스트 편집 CRDT에서 정확성을 만족시키지 못하는 몇 가지 다른 사례들을 살펴본다.&lt;/li&gt;
+  &lt;li&gt;5절에서는 OpSet를 사용하여 새로운 복제 된 데이터타입을 개발하는 방법에 대해 알아본다. 특히 트리 CRDT에서 원자 이동 연산을 정의하는 방법을 소개한다. 이 작업은 트리 내의 새 위치로 하위 트리를 이동하거나 맵에서 키의 이름을 바꾸거나 리스트에서 항목의 순서를 변경하는 데 사용할 수 있다. OpSets 접근 방식은 그 동안 잠금장치(Lock) 없이 구현할 수 없던 작업을 간단하게 정의할 수 있다.&lt;/li&gt;
+  &lt;li&gt;Isabelle/HOL 증명 도구를 사용하여 OpSets를 공식화하고 이 논문의 주요 주장의 정확성에 대한 기계화 된 증명을 산출한다. 특히 공동 텍스트 편집의 최근 스펙인 Attiya 보다 더 엄격하게 입증한다. 기계화 된 교정을 사용함으로써 이전의 비공식적 인 접근 방법의 모호성 없이 텍스트 수정에서 발생할 수있는 추론 오류를 배제한다.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h3 id=&quot;2-opsets-접근방식&quot;&gt;2. OpSets 접근방식&lt;/h3&gt;
 
@@ -44,8 +46,10 @@ Isabelle/HOL 증명 도구를 사용하여 OpSets를 공식화하고 이 논문�
 
 &lt;p&gt;각 Operation은 고유 ID를 갖고 있으며, 모든 노드는 다른 노드와 통신하지 않고 새 ID의 생성이 가능하며 Operation ID는 전체 시스템에서 순서를 매길 수 있다고 가정한다(total ordering). 램포트 시계(Lamport timestamp)를 ID로 사용하면 이 요구 사항을 쉽게 충족시킬 수 있다. 램포트 시계는 다음과 같이 (counter, nodeID)로 구성된 쌍이다.&lt;/p&gt;
 
-&lt;p&gt;counter는 정수(integer)다. Operation ID 생성시, 로컬 OpSet의 기존 Operation ID 중 최대값을 하나 증가시켜서 할당한다.
-nodeID는 ID를 생성하는 노드를 고유하게 식별하는 문자열이다(예: UUID).&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;counter는 정수(integer)다. Operation ID 생성시, 로컬 OpSet의 기존 Operation ID 중 최대값을 하나 증가시켜서 할당한다.&lt;/li&gt;
+  &lt;li&gt;nodeID는 ID를 생성하는 노드를 고유하게 식별하는 문자열이다(예: UUID).&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;서로 다른 노드가 동일한 카운터 값을 갖는 ID가 생성될 수도 있지만, 각 노드는 엄격하게 단조롭게 증가하는 카운터 값으로 ID를 생성하므로 ID는 전역적으로 고유하다(nodeID가 고유하므로). Operation ID에 대한 전체 순서는 다음과 같이 정의한다.&lt;/p&gt;
 
@@ -82,8 +86,10 @@ nodeID는 ID를 생성하는 노드를 고유하게 식별하는 문자열이다
 
 &lt;p&gt;OpSet 모델에서 이러한 비 순차적 인 Operation의 전달은 문제가 되지 않는다. Operation의 수신 순서는 OpSet O에는 아무런 영향을 미치지 않으며, 해석 함수가 순수하고 부수효과가 없다고 가정하기 때문에 해석 작업은 새로운 Operation이 O에 추가 될 때마다 항상 다시 계산된다. 해석 함수는 일련의 Operation을 해석 할 때 예상되는 결과를 정의하는 실행 가능 스펙이다. 이 방식으로 복제 된 데이터타입을 구현하면 두 가지 중요한 이점이 있다.&lt;/p&gt;
 
-&lt;p&gt;다른 CRDT 알고리즘 정의와 다르게 해석 함수 interpS(id, op)는 다른 Operation과 관련하여 commute할 필요가 없다. 어떤 순수한 함수도 사용할 수 있다. 이는 3절과 5절에서 볼 수 있듯이 Operation 해석을 기술하는 일이 훨씬 간단해진다.
-기술한 각 데이터타입의 구현의 존재를 스펙 자체로 보장 할 수 있다. 이는 구현할 수 없는 공리적 명세와는 달리, 공리적 설명을 만족시키는 구현이 존재 함을 입증하기 위해 추가 작업이 필요하다(내용 이해 못함, This is in contrast to axiomatic specifications, which may not be implementable, and require additional work to demonstrate than an implementation exists which satisfies the axiomatic description.).&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;다른 CRDT 알고리즘 정의와 다르게 해석 함수 interpS(id, op)는 다른 Operation과 관련하여 commute할 필요가 없다. 어떤 순수한 함수도 사용할 수 있다. 이는 3절과 5절에서 볼 수 있듯이 Operation 해석을 기술하는 일이 훨씬 간단해진다.&lt;/li&gt;
+  &lt;li&gt;기술한 각 데이터타입의 구현의 존재를 스펙 자체로 보장 할 수 있다. 이는 구현할 수 없는 공리적 명세와는 달리, 공리적 설명을 만족시키는 구현이 존재 함을 입증하기 위해 추가 작업이 필요하다(내용 이해 못함, This is in contrast to axiomatic specifications, which may not be implementable, and require additional work to demonstrate than an implementation exists which satisfies the axiomatic description.).&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;노드가 잠재적으로 동일한 하위 Operation 집합을 반복적으로 적용하기 때문에 순수 OpSet 해설은 실제 구현보다 성능이 저하 될 수 있다. 따라서 OpSet 기반 스펙을 만족하고 CRDT의 효율적인 (그리고 아마도 가장 복잡한) 알고리즘의 구현은 4절에서 알아본다.&lt;/p&gt;
 
@@ -99,12 +105,14 @@ nodeID는 ID를 생성하는 노드를 고유하게 식별하는 문자열이다
 
 &lt;p&gt;일반적 데이터 구조의 OpSet에는 다음과 같이 6가지 유형의 Operation이 포함된다.&lt;/p&gt;
 
-&lt;p&gt;(id, MakeMap)은 id로 식별되는 비어있는 새 맵 객체를 만든다.
-(id, MakeList)는 id로 식별되는 비어있는 새 리스트 객체를 만든다.
-(id, MakeVal(val))는 id로 식별되는 기본형 값 val(i.g.: 숫자, 문자열 또는 boolean)을 할당한다. 이 Operation은 값을 감싸는데 사용하며 값으로 기본형 혹은 맵 또는 리스트에 대한 참조로 갖는다.
-(id, InsertAfter(ref))는 id로 식별되는 새 요소를 만들어서 리스트에 삽입한다. ref가 MakeList Operation의 ID 인 경우, 새로운 요소가 리스트의 head에 삽입된다. 혹은 ref는 기존 리스트 요소의 ID(예: InsertAfter Operation)이어야 하며, 이 경우 새 리스트 요소는 참조한 요소 바로 다음에 삽입된다. InsertAfter Operation에서는 값을 새 요소에 할당하지 않고 이는 Assign Operation에 의해 수행된다.
-(id, Assign(obj, key, val, prev))는 맵의 키에 새로운 값을 할당한다(obj가 이전 MakeMap Operation의 ID 인 경우) 또는 list 요소(obj가 MakeList Operation). 맵 할당의 경우 key는 업데이트 할 사용자 지정 키이며 문자열 또는 정수와 같은 기본 값이 된다. 리스트의 경우, key는 갱신 할 리스트 요소의 ID(즉, 이전의 InsertAfter 연산의 ID)이다. val은 값의 ID이며 MakeMap, MakeList 또는 MakeVal Operation을 식별 할 수 있다. prev는 동일한 객체의 동일한 키에 대한 이전 Assign Operation 들의 ID 집합이며 현재 Operation으로 덮어 쓴다.
-(id, Remove(obj, key, prev))는 맵에서 키-값 쌍을 제거하거나 리스트에서 요소를 제거한다. 할당과 마찬가지로 obj는 업데이트한 객체를 생성 한 이전 MakeMap 또는 MakeList Operation의 ID이며 key는 제거할 키 또는 리스트 요소를 식별한다. prev는 동일한 객체의 동일한 키에 대한 이전 Assign Operation의 ID 집합이며 현재 Operation에 의해 제거된다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;(id, MakeMap)은 id로 식별되는 비어있는 새 맵 객체를 만든다.&lt;/li&gt;
+  &lt;li&gt;(id, MakeList)는 id로 식별되는 비어있는 새 리스트 객체를 만든다.&lt;/li&gt;
+  &lt;li&gt;(id, MakeVal(val))는 id로 식별되는 기본형 값 val(i.g.: 숫자, 문자열 또는 boolean)을 할당한다. 이 Operation은 값을 감싸는데 사용하며 값으로 기본형 혹은 맵 또는 리스트에 대한 참조로 갖는다.&lt;/li&gt;
+  &lt;li&gt;(id, InsertAfter(ref))는 id로 식별되는 새 요소를 만들어서 리스트에 삽입한다. ref가 MakeList Operation의 ID 인 경우, 새로운 요소가 리스트의 head에 삽입된다. 혹은 ref는 기존 리스트 요소의 ID(예: InsertAfter Operation)이어야 하며, 이 경우 새 리스트 요소는 참조한 요소 바로 다음에 삽입된다. InsertAfter Operation에서는 값을 새 요소에 할당하지 않고 이는 Assign Operation에 의해 수행된다.&lt;/li&gt;
+  &lt;li&gt;(id, Assign(obj, key, val, prev))는 맵의 키에 새로운 값을 할당한다(obj가 이전 MakeMap Operation의 ID 인 경우) 또는 list 요소(obj가 MakeList Operation). 맵 할당의 경우 key는 업데이트 할 사용자 지정 키이며 문자열 또는 정수와 같은 기본 값이 된다. 리스트의 경우, key는 갱신 할 리스트 요소의 ID(즉, 이전의 InsertAfter 연산의 ID)이다. val은 값의 ID이며 MakeMap, MakeList 또는 MakeVal Operation을 식별 할 수 있다. prev는 동일한 객체의 동일한 키에 대한 이전 Assign Operation 들의 ID 집합이며 현재 Operation으로 덮어 쓴다.&lt;/li&gt;
+  &lt;li&gt;(id, Remove(obj, key, prev))는 맵에서 키-값 쌍을 제거하거나 리스트에서 요소를 제거한다. 할당과 마찬가지로 obj는 업데이트한 객체를 생성 한 이전 MakeMap 또는 MakeList Operation의 ID이며 key는 제거할 키 또는 리스트 요소를 식별한다. prev는 동일한 객체의 동일한 키에 대한 이전 Assign Operation의 ID 집합이며 현재 Operation에 의해 제거된다.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;위 Operation 생성의 의사 코드는 부록 A에 있다.&lt;/p&gt;
 
@@ -112,8 +120,10 @@ nodeID는 ID를 생성하는 노드를 고유하게 식별하는 문자열이다
 
 &lt;p&gt;2.2절에서 주어진 순차적 OpSet 해석을 사용한다. map 및 list 데이터 구조의 현재 상태를 인코딩하기 위해 관계 페어(E, L)를 사용한다.&lt;/p&gt;
 
-&lt;p&gt;요소 관계 E ⊆ (ID × ID × (ID ∪ Key) × ID): 맵 키와 리스트 요소에 현재 할당 된 값을 포함하는 4- 튜플 집합. (id, obj, key, val) ∈ E이면 id를 가진 Assign 연산은 obj를 가진 객체를 업데이트하여 val 값을 map key 또는 list element key에 할당한다. Obj가 리스트 오브젝트를 참조하면, key는 리스트 관계 L에있는 요소의 ID이다(아래 참조). Obj 객체를 참조하는 경우 문자열이나 정수와 같은 기본형을 키로 사용할 수 있다.
-리스트 관계 L ⊆ (ID × (ID ∪ {⊥})): 리스트 요소의 순서를 나타내는 페어의 집합이다. (prev, next) ∈ L이라면, prev를 갖는 리스트 요소 바로 다음에 ID가 next 인 요소가 뒤따라 온다. (last, ⊥) ∈ L을 사용하여 리스트 요소에 마지막임을 알 수 있다. head는 리스트 obj의 첫 번째 요소이고 (obj는 리스트를 생성 한 MakeList Operation의 ID) (obj, head) ∈ L을 가진다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;요소 관계 E ⊆ (ID × ID × (ID ∪ Key) × ID): 맵 키와 리스트 요소에 현재 할당 된 값을 포함하는 4- 튜플 집합. (id, obj, key, val) ∈ E이면 id를 가진 Assign 연산은 obj를 가진 객체를 업데이트하여 val 값을 map key 또는 list element key에 할당한다. Obj가 리스트 오브젝트를 참조하면, key는 리스트 관계 L에있는 요소의 ID이다(아래 참조). Obj 객체를 참조하는 경우 문자열이나 정수와 같은 기본형을 키로 사용할 수 있다.&lt;/li&gt;
+  &lt;li&gt;리스트 관계 L ⊆ (ID × (ID ∪ {⊥})): 리스트 요소의 순서를 나타내는 페어의 집합이다. (prev, next) ∈ L이라면, prev를 갖는 리스트 요소 바로 다음에 ID가 next 인 요소가 뒤따라 온다. (last, ⊥) ∈ L을 사용하여 리스트 요소에 마지막임을 알 수 있다. head는 리스트 obj의 첫 번째 요소이고 (obj는 리스트를 생성 한 MakeList Operation의 ID) (obj, head) ∈ L을 가진다.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;초기에는 두 관계가 비어 있다. 즉, [∅] = InitialState = (∅, ∅)이다. 그리고 다음과 같이 여섯 가지 Operation 유형의 해석을 정의한다.&lt;/p&gt;
 
@@ -192,9 +202,11 @@ nodeID는 ID를 생성하는 노드를 고유하게 식별하는 문자열이다
 
 &lt;p&gt;트리 데이터를 사용하는 애플리케이션에서 종종 필요한 작업중 하나는 트리 내의 새 위치로 하위 트리를 이동하는 것이다.&lt;/p&gt;
 
-&lt;p&gt;파일 시스템에서 디렉토리 이름 변경은 디렉토리 노드를 이전 이름에서 새 이름으로 이동하는 것으로 표현할 수 있다. 마찬가지로 디렉토리를 새 경로로 이동하기도 한다.
-벡터 그래픽 애플리케이션에서 여러 객체를 논리 단위로 그룹화하는데, 그룹을 나타내는 새 branch 노드를 만든 다음 개별 객체를 해당 그룹 노드의 하위 노드로 이동하여 표현한다.
-To-do list 애플리케이션에서 사용자는 리스트의 순서를 사용하여 우선 순위를 나타내며 항목을 drag&amp;amp;drop으로 순서를 변경한다. 항목 재정렬은 항목을 리스트 내의 새로운 위치로 이동하는 것과 같다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;파일 시스템에서 디렉토리 이름 변경은 디렉토리 노드를 이전 이름에서 새 이름으로 이동하는 것으로 표현할 수 있다. 마찬가지로 디렉토리를 새 경로로 이동하기도 한다.&lt;/li&gt;
+  &lt;li&gt;벡터 그래픽 애플리케이션에서 여러 객체를 논리 단위로 그룹화하는데, 그룹을 나타내는 새 branch 노드를 만든 다음 개별 객체를 해당 그룹 노드의 하위 노드로 이동하여 표현한다.&lt;/li&gt;
+  &lt;li&gt;To-do list 애플리케이션에서 사용자는 리스트의 순서를 사용하여 우선 순위를 나타내며 항목을 drag&amp;amp;drop으로 순서를 변경한다. 항목 재정렬은 항목을 리스트 내의 새로운 위치로 이동하는 것과 같다.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;이전 위치의 하위 트리를 삭제하고 새 위치에서 다시 작성하여 Move Operation을 기본적(naively)으로 표현할 수 있다. 그러나 두 명의 사용자가 이 프로세스를 동시에 수행하는 경우 결과 트리에는 이동 된 하위 트리에 두번 복제 된다. 이는 위에 제공된 모든 애플리케이션에서 바람직하지 않다. 따라서 동시 이동의 경우 중복 객체를 생성하지 않는 Atomic Move Operation이 필요하다.&lt;/p&gt;
 
