@@ -88,7 +88,7 @@
 
 <h2 id="요약">요약</h2>
 
-<p>이 논문은 분산 시스템에서 최종적인 일관성(eventual consistency)의 복제 데이터타입(replicated datatype)을 구현한 프레임워크인 OpSets를 제안한다. 또 이런 유형의 데이터타입(CRDT)을 구현하는 알고리즘을 기계적으로 검증한다. 이는 간단하지만 표현력이 뛰어나므로 맵(map), 집합(set), 리스트(list), 텍스트(text), 그래프(graph), 트리(tree) 및 레지스터(register)를 비롯한 다양한 추상 데이터타입을 간단히 적용할 수 있다. 또 데이터타입을 복잡한 데이터 구조를 구성할 수 있다. 복제 알고리즘을 분석하기 위한 OpSet의 기능을 알아보기 위해, 이전부터 간과되었지만 협업 텍스트 편집에서 중요한 정확성(correctness property)에 대해 살펴본다. 정확성을 만족시키지 않는 알고리즘은 텍스트 공동편집시 의도하지 않은 글자가 삽입되는 현상이 나타난다. OpSets를 사용해서 정확성을 정의하고 기존 복제 알고리즘들이 정확성을 충족시키는지 확인한다. 또한 새로운 복제 된 데이터타입을 개발하는 데 OpSets를 사용하는 방법에 대해서 알아본다. 기존에는 잠금장치(Lock)를 사용하지 않고 구현하기 어려웠던 트리에서 원자적 이동 Operation에 대해 알아본다. 이 논문은 이전의 비공식 접근 방식의 모호함을 없애고 추론 오류를 배제하기 위해서 Isabelle/HOL 증명 도구를 사용해서 OpSets를 공식화하고 주요 주장의 정확성에 대해서 기계적으로 증명한다.</p>
+<p>이 논문은 분산 시스템에서 최종적인 일관성(eventual consistency)의 복제 데이터타입(replicated datatype)을 구현한 프레임워크인 OpSets를 제안한다. 또 이런 유형의 데이터타입(CRDT)을 구현하는 알고리즘을 기계적으로 검증한다. 이는 간단하지만 표현력이 뛰어나므로 맵(map), 세트(set), 리스트(list), 텍스트(text), 그래프(graph), 트리(tree) 및 레지스터(register)를 비롯한 다양한 추상 데이터타입을 간단히 적용할 수 있다. 또 데이터타입을 복잡한 데이터 구조를 구성할 수 있다. 복제 알고리즘을 분석하기 위한 OpSet의 기능을 알아보기 위해, 이전부터 간과되었지만 협업 텍스트 편집에서 중요한 정확성(correctness property)에 대해 살펴본다. 정확성을 만족시키지 않는 알고리즘은 텍스트 공동편집시 의도하지 않은 글자가 삽입되는 현상이 나타난다. OpSets를 사용해서 정확성을 정의하고 기존 복제 알고리즘들이 정확성을 충족시키는지 확인한다. 또한 새로운 복제 된 데이터타입을 개발하는 데 OpSets를 사용하는 방법에 대해서 알아본다. 기존에는 잠금장치(Lock)를 사용하지 않고 구현하기 어려웠던 트리에서 원자적 이동 Operation에 대해 알아본다. 이 논문은 이전의 비공식 접근 방식의 모호함을 없애고 추론 오류를 배제하기 위해서 Isabelle/HOL 증명 도구를 사용해서 OpSets를 공식화하고 주요 주장의 정확성에 대해서 기계적으로 증명한다.</p>
 
 <h3 id="1-도입">1. 도입</h3>
 
@@ -114,13 +114,13 @@
 
 <h4 id="21-시스템-모델">2.1 시스템 모델</h4>
 
-<p>대상 시스템은 네트워크에 연결된 노드 집합으로 구성된다. 각 노드는 관계형 데이터베이스(row를 갖은 테이블), 텍스트 문서(문자 시퀀스), 벡터 그래프 문서(그래프 개체의 레코드 트리), 파일 시스템(디렉토리, 파일의 트리) 등의 데이터에 접근한다.</p>
+<p>대상 시스템은 네트워크에 연결된 노드 세트으로 구성된다. 각 노드는 관계형 데이터베이스(row를 갖은 테이블), 텍스트 문서(문자 시퀀스), 벡터 그래프 문서(그래프 개체의 레코드 트리), 파일 시스템(디렉토리, 파일의 트리) 등의 데이터에 접근한다.</p>
 
-<p>새 노드는 언제든지 추가 할 수 있으며 사전에 노드 집합을 알 필요는 없다. 노드는 모바일 장치와 같이 일시적으로 다른 노드와 통신 할 수 없다고 가정한다. 노드는 오프라인에서도 언제든지 공유 데이터(shared data)에 접근할 수 있어야한다. 따라서 각 노드는 공유 데이터의 로컬 사본(copy)을 가지며, 다른 노드와의 통신 또는 조정을 기다리지 않고 공유 데이터를 읽고 수정할 수 있다.</p>
+<p>새 노드는 언제든지 추가 할 수 있으며 사전에 노드 세트을 알 필요는 없다. 노드는 모바일 장치와 같이 일시적으로 다른 노드와 통신 할 수 없다고 가정한다. 노드는 오프라인에서도 언제든지 공유 데이터(shared data)에 접근할 수 있어야한다. 따라서 각 노드는 공유 데이터의 로컬 사본(copy)을 가지며, 다른 노드와의 통신 또는 조정을 기다리지 않고 공유 데이터를 읽고 수정할 수 있다.</p>
 
-<p>노드가 공유 데이터를 수정하면 변경 사항을 Operation으로 기록한다. 예를 들어, 텍스트 문서의 특정 위치에 삽입을 Operation으로 표현한다. 각 노드는 로컬에 Operation의 집합, OpSet을 관리한다. 노드가 공유 데이터를 변경하면 OpSet에 해당 Operation을 추가하고 Operation이 포함된 메시지를 다른 노드에 전송한다. 노드가 다른 노드에서 메시지를 수신 하면, 해당 메시지의 Operation이 수신자의 로컬 OpSet에 추가된다. Operation은 전체 과정에서 변경되지 않는다(Immutable).</p>
+<p>노드가 공유 데이터를 수정하면 변경 사항을 Operation으로 기록한다. 예를 들어, 텍스트 문서의 특정 위치에 삽입을 Operation으로 표현한다. 각 노드는 로컬에 Operation의 세트, OpSet을 관리한다. 노드가 공유 데이터를 변경하면 OpSet에 해당 Operation을 추가하고 Operation이 포함된 메시지를 다른 노드에 전송한다. 노드가 다른 노드에서 메시지를 수신 하면, 해당 메시지의 Operation이 수신자의 로컬 OpSet에 추가된다. Operation은 전체 과정에서 변경되지 않는다(Immutable).</p>
 
-<p>네트워크의 신뢰성에 대해서는 아무런 가정을 하지 않는다. 메시지는 손실(lost)되거나 중복(duplicate)되거나 임의 순서(reordered)로 전달 될 수 있다. 실제 네트워크의 특성을 반영하여 가능한 경우 손실 된 메시지를 재전송한다고 가정하지만 (예 : TCP 사용) 네트워크 또는 노드 오류로 인해 메시지가 영구적으로 손실 될 수 있다. 각 노드의 OpSet은 단조롭게(monotonically) 증가하는 Operation 집합이므로 두 통신 노드는 표준 조합 연산자 ∪(Union)을 사용하여 OpSets를 병합 할 수 있다. OpSets의 합집합은 교환 법칙(commutative), 결합 법칙(associative), 멱등 법칙(idempotent)이 적용 되므로 통신중인 노드가 동일한 OpSet 내용으로 수렴(converge)된다.</p>
+<p>네트워크의 신뢰성에 대해서는 아무런 가정을 하지 않는다. 메시지는 손실(lost)되거나 중복(duplicate)되거나 임의 순서(reordered)로 전달 될 수 있다. 실제 네트워크의 특성을 반영하여 가능한 경우 손실 된 메시지를 재전송한다고 가정하지만 (예 : TCP 사용) 네트워크 또는 노드 오류로 인해 메시지가 영구적으로 손실 될 수 있다. 각 노드의 OpSet은 단조롭게(monotonically) 증가하는 Operation 세트이므로 두 통신 노드는 표준 조합 연산자 ∪(Union)을 사용하여 OpSets를 병합 할 수 있다. OpSets의 합집합은 교환 법칙(commutative), 결합 법칙(associative), 멱등 법칙(idempotent)이 적용 되므로 통신중인 노드가 동일한 OpSet 내용으로 수렴(converge)된다.</p>
 
 <p>각 Operation은 고유 ID를 갖고 있으며, 모든 노드는 다른 노드와 통신하지 않고 새 ID의 생성이 가능하며 Operation ID는 전체 시스템에서 순서를 매길 수 있다고 가정한다(total ordering). 램포트 시계(Lamport timestamp)를 ID로 사용하면 이 요구 사항을 쉽게 충족시킬 수 있다. 램포트 시계는 다음과 같이 (counter, nodeID)로 구성된 쌍이다.</p>
 
@@ -143,13 +143,13 @@
 
 <p>원칙적으로 결정적 함수(deterministic function)는 해석 함수로 사용될 수 있다. 그러나 CRDT의 의미론(semantics)을 정의 할 때(3절과 5절 참조) 한 번에 하나의 Operation을 해석하도록 <code class="highlighter-rouge">[-]</code>를 분리하는 것(specialize)이 유용했다.</p>
 
-<p>OpSet <code class="highlighter-rouge">O</code>는 페어(id, op)의 집합이다. 여기서 id는 고유 한 Operation 식별자이고 op는 발생한 수정 내용의 설명이다. 2.1절에서 설명한 것처럼 식별자는 전체 순서가 보장된다고 가정한다. 임의의 OpSet에 대해서 모든 Operation들은 Operation ID에 의한 오름차순 순서가 있음을 알 수 있다. 해석 함수를 하나씩 적용할 때 각 Operation의 의미론을 정의할 수 있다.</p>
+<p>OpSet <code class="highlighter-rouge">O</code>는 페어<code class="highlighter-rouge">(id, op)</code>의 세트이다. 여기서 id는 고유 한 Operation 식별자이고 op는 발생한 수정 내용의 설명이다. 2.1절에서 설명한 것처럼 식별자는 전체 순서가 보장된다고 가정한다. 임의의 OpSet에 대해서 모든 Operation들은 Operation ID에 의한 오름차순 순서가 있음을 알 수 있다. 해석 함수를 하나씩 적용할 때 각 Operation의 의미론을 정의할 수 있다.</p>
 
 <p>형식적으로 OpSet O의 해석 함수 <code class="highlighter-rouge">[O]</code>는 다음과 같이 정의 한다.</p>
 
 <p><img src="/assets/img/2018-11-08-opsets/image17.png" alt="image17" /></p>
 
-<p>여기서, <code class="highlighter-rouge">interp[S, (id, op)]</code>는 상태 S의 Operation (id, op) 해석이고, InitialState는 복제 데이터 타입의 최소 상태(예를 들어, 빈 트리 또는 빈 리스트)이다. 즉, S가 id보다 작은 식별자를 가진 모든 Operation을 해석 한 결과라면, <code class="highlighter-rouge">interp[S, (id, op)]</code>는 (id, op)가 추가 된 OpSet의 해석이다. 예를 들어, <code class="highlighter-rouge">id1 &lt;id2 &lt;id3</code> 인 경우 다음과 같다.</p>
+<p>여기서, <code class="highlighter-rouge">interp[S, (id, op)]</code>는 상태 S의 Operation <code class="highlighter-rouge">(id, op)</code> 해석이고, InitialState는 복제 데이터 타입의 최소 상태(예를 들어, 빈 트리 또는 빈 리스트)이다. 즉, <code class="highlighter-rouge">S</code>가 id보다 작은 식별자를 가진 모든 Operation을 해석 한 결과라면, <code class="highlighter-rouge">interp[S, (id, op)]</code>는 <code class="highlighter-rouge">(id, op)</code>가 추가 된 OpSet의 해석이다. 예를 들어, <code class="highlighter-rouge">id1 &lt;id2 &lt;id3</code> 인 경우 다음과 같다.</p>
 
 <p><img src="/assets/img/2018-11-08-opsets/image4.png" alt="image4" /></p>
 
@@ -169,9 +169,9 @@
   <li>기술한 각 데이터타입의 구현의 존재를 스펙 자체로 보장 할 수 있다. 이는 구현할 수 없는 공리적 명세와는 달리, 공리적 설명을 만족시키는 구현이 존재 함을 입증하기 위해 추가 작업이 필요하다.</li>
 </ul>
 
-<p>노드가 잠재적으로 동일한 하위 Operation 집합을 반복적으로 적용하기 때문에 순수 OpSet 해설은 실제 구현보다 성능이 저하 될 수 있다. 따라서 OpSet 기반 스펙을 만족하고 CRDT의 효율적인 (그리고 아마도 가장 복잡한) 알고리즘의 구현은 4절에서 알아본다.</p>
+<p>노드가 잠재적으로 동일한 하위 Operation 세트을 반복적으로 적용하기 때문에 순수 OpSet 해설은 실제 구현보다 성능이 저하 될 수 있다. 따라서 OpSet 기반 스펙을 만족하고 CRDT의 효율적인 (그리고 아마도 가장 복잡한) 알고리즘의 구현은 4절에서 알아본다.</p>
 
-<p>OpSet 모델을 기반으로 실용적인 JavaScript CRDT 구현체를 개발했고 몇 가지 장점을 발견했다. 예를 들어, 문서의 모든 편집 버전이 해석이므로 문서의 편집 내역을 쉽게 검사 할 수 있다. 특정 작업의 하위 집합 또한, OpSets를 사용하면 누락 된 Operation이 이전에 단절된 노드의 OpSets에 재전송되어 추가 될 수 있으므로 네트워크 파티션, 장애로부터 복구 할 수 있는 간단한 메커니즘을 제공한다. 하지만 이 구현의 세부 사항은 이 논문의 범위를 벗어난다.</p>
+<p>OpSet 모델을 기반으로 실용적인 JavaScript CRDT 구현체를 개발했고 몇 가지 장점을 발견했다. 예를 들어, 문서의 모든 편집 버전이 해석이므로 문서의 편집 내역을 쉽게 검사 할 수 있다. 특정 작업의 하위 세트 또한, OpSets를 사용하면 누락 된 Operation이 이전에 단절된 노드의 OpSets에 재전송되어 추가 될 수 있으므로 네트워크 파티션, 장애로부터 복구 할 수 있는 간단한 메커니즘을 제공한다. 하지만 이 구현의 세부 사항은 이 논문의 범위를 벗어난다.</p>
 
 <h3 id="3-리스트-맵-레지스터-그래프-정의하기">3. 리스트, 맵, 레지스터, 그래프 정의하기</h3>
 
@@ -188,8 +188,8 @@
   <li><code class="highlighter-rouge">(id, MakeList)</code>는 id로 식별되는 비어있는 새 리스트 객체를 만든다.</li>
   <li><code class="highlighter-rouge">(id, MakeVal(val))</code>는 id로 식별되는 기본형 값 val(i.g.: 숫자, 문자열 또는 boolean)을 할당한다. 이 Operation은 값을 감싸는데 사용하며 값으로 기본형 혹은 맵 또는 리스트에 대한 참조로 갖는다.</li>
   <li><code class="highlighter-rouge">(id, InsertAfter(ref))</code>는 id로 식별되는 새 요소를 만들어서 리스트에 삽입한다. ref가 MakeList Operation의 ID 인 경우, 새로운 요소가 리스트의 head에 삽입된다. 혹은 ref는 기존 리스트 요소의 ID(예: InsertAfter Operation)이어야 하며, 이 경우 새 리스트 요소는 참조한 요소 바로 다음에 삽입된다. InsertAfter Operation에서는 값을 새 요소에 할당하지 않고 이는 Assign Operation에 의해 수행된다.</li>
-  <li><code class="highlighter-rouge">(id, Assign(obj, key, val, prev))</code>는 맵의 키에 새로운 값을 할당한다(obj가 이전 MakeMap Operation의 ID 인 경우) 또는 list 요소(obj가 MakeList Operation). 맵 할당의 경우 key는 업데이트 할 사용자 지정 키이며 문자열 또는 정수와 같은 기본 값이 된다. 리스트의 경우, key는 갱신 할 리스트 요소의 ID(즉, 이전의 InsertAfter Operation의 ID)이다. val은 값의 ID이며 MakeMap, MakeList 또는 MakeVal Operation을 식별 할 수 있다. prev는 동일한 객체의 동일한 키에 대한 이전 Assign Operation 들의 ID 집합이며 현재 Operation으로 덮어 쓴다.</li>
-  <li><code class="highlighter-rouge">(id, Remove(obj, key, prev))</code>는 맵에서 키-값 쌍을 제거하거나 리스트에서 요소를 제거한다. 할당과 마찬가지로 obj는 업데이트한 객체를 생성 한 이전 MakeMap 또는 MakeList Operation의 ID이며 key는 제거할 키 또는 리스트 요소를 식별한다. prev는 동일한 객체의 동일한 키에 대한 이전 Assign Operation의 ID 집합이며 현재 Operation에 의해 제거된다.</li>
+  <li><code class="highlighter-rouge">(id, Assign(obj, key, val, prev))</code>는 맵의 키에 새로운 값을 할당한다(obj가 이전 MakeMap Operation의 ID 인 경우) 또는 list 요소(obj가 MakeList Operation). 맵 할당의 경우 key는 업데이트 할 사용자 지정 키이며 문자열 또는 정수와 같은 기본 값이 된다. 리스트의 경우, key는 갱신 할 리스트 요소의 ID(즉, 이전의 InsertAfter Operation의 ID)이다. val은 값의 ID이며 MakeMap, MakeList 또는 MakeVal Operation을 식별 할 수 있다. prev는 동일한 객체의 동일한 키에 대한 이전 Assign Operation 들의 ID 세트이며 현재 Operation으로 덮어 쓴다.</li>
+  <li><code class="highlighter-rouge">(id, Remove(obj, key, prev))</code>는 맵에서 키-값 쌍을 제거하거나 리스트에서 요소를 제거한다. 할당과 마찬가지로 obj는 업데이트한 객체를 생성 한 이전 MakeMap 또는 MakeList Operation의 ID이며 key는 제거할 키 또는 리스트 요소를 식별한다. prev는 동일한 객체의 동일한 키에 대한 이전 Assign Operation의 ID 세트이며 현재 Operation에 의해 제거된다.</li>
 </ul>
 
 <p>위 Operation 생성의 의사 코드는 부록 A에 있다.</p>
@@ -199,15 +199,15 @@
 <p>2.2절에서 주어진 순차적 OpSet 해석을 사용한다. map 및 list 데이터 구조의 현재 상태를 인코딩하기 위해 관계 페어(E, L)를 사용한다.</p>
 
 <ul>
-  <li>요소 관계 <code class="highlighter-rouge">E ⊆ (ID × ID × (ID ∪ Key) × ID)</code>: 맵 키와 리스트 요소에 현재 할당 된 값을 포함하는 4- 튜플 집합. <code class="highlighter-rouge">(id, obj, key, val) ∈ E</code>이면 id를 가진 Assign Operation은 obj를 가진 객체를 업데이트하여 val 값을 map key 또는 list element key에 할당한다. Obj가 리스트 오브젝트를 참조하면, key는 리스트 관계 L에있는 요소의 ID이다(아래 참조). Obj 객체를 참조하는 경우 문자열이나 정수와 같은 기본형을 키로 사용할 수 있다.</li>
-  <li>리스트 관계 <code class="highlighter-rouge">L ⊆ (ID × (ID ∪ {⊥}))</code>: 리스트 요소의 순서를 나타내는 페어의 집합이다. <code class="highlighter-rouge">(prev, next) ∈ L</code>이라면, prev를 갖는 리스트 요소 바로 다음에 ID가 next 인 요소가 뒤따라 온다. <code class="highlighter-rouge">(last, ⊥) ∈ L</code>을 사용하여 리스트 요소에 마지막임을 알 수 있다. head는 리스트 obj의 첫 번째 요소이고 (obj는 리스트를 생성 한 MakeList Operation의 ID) <code class="highlighter-rouge">(obj, head) ∈ L</code>을 가진다.</li>
+  <li>요소 관계 <code class="highlighter-rouge">E ⊆ (ID × ID × (ID ∪ Key) × ID)</code>: 맵 키와 리스트 요소에 현재 할당 된 값을 포함하는 4-튜플 세트. <code class="highlighter-rouge">(id, obj, key, val) ∈ E</code>이면 id를 가진 Assign Operation은 obj를 가진 객체를 업데이트하여 val 값을 map key 또는 list element key에 할당한다. Obj가 리스트 오브젝트를 참조하면, key는 리스트 관계 L에있는 요소의 ID이다(아래 참조). Obj 객체를 참조하는 경우 문자열이나 정수와 같은 기본형을 키로 사용할 수 있다.</li>
+  <li>리스트 관계 <code class="highlighter-rouge">L ⊆ (ID × (ID ∪ {⊥}))</code>: 리스트 요소의 순서를 나타내는 페어의 세트이다. <code class="highlighter-rouge">(prev, next) ∈ L</code>이라면, prev를 갖는 리스트 요소 바로 다음에 ID가 next 인 요소가 뒤따라 온다. <code class="highlighter-rouge">(last, ⊥) ∈ L</code>을 사용하여 리스트 요소에 마지막임을 알 수 있다. head는 리스트 obj의 첫 번째 요소이고 (obj는 리스트를 생성 한 MakeList Operation의 ID) <code class="highlighter-rouge">(obj, head) ∈ L</code>을 가진다.</li>
 </ul>
 
 <p>초기에는 두 관계가 비어 있다. 즉, <code class="highlighter-rouge">[∅] = InitialState = (∅, ∅)</code>이다. 그리고 다음과 같이 여섯 가지 Operation 유형의 해석을 정의한다.</p>
 
 <p><img src="/assets/img/2018-11-08-opsets/image10.png" alt="image10" /></p>
 
-<p>Assign, Remove의 해석은 E 만 업데이트하고 L은 변경하지 않는다. 반대로 InsertAfter와 MakeList의 해석은 L만 업데이트 한다. Assign, Remove 해석은 튜플을 인과 관계로 이전 Assign(prev의 ID가 ID로 표시되는 튜플)에서 제거하지만 동시 할당의 튜플은 변경하지 않는데 이는 다중 값 레지스터의 동작이다. last-writer-wins 레지스터가 필요한 경우 <code class="highlighter-rouge">id’ ∈/ prev</code> 조건을 <code class="highlighter-rouge">obj’ != obj ∨ key’ != key</code>로 변경하면 동일한 객체 ID와 키를 가진 기존 튜플을 제거 할 수 있다.</p>
+<p>Assign, Remove의 해석은 <code class="highlighter-rouge">E</code>만 업데이트하고 <code class="highlighter-rouge">L</code>은 변경하지 않는다. 반대로 InsertAfter와 MakeList의 해석은 <code class="highlighter-rouge">L</code>만 업데이트 한다. Assign, Remove 해석은 튜플을 인과 관계로 이전 Assign(prev의 ID가 ID로 표시되는 튜플)에서 제거하지만 동시 할당의 튜플은 변경하지 않는데 이는 다중 값 레지스터의 동작이다. last-writer-wins 레지스터가 필요한 경우 <code class="highlighter-rouge">id’ ∈/ prev</code> 조건을 <code class="highlighter-rouge">obj’ != obj ∨ key’ != key</code>로 변경하면 동일한 객체 ID와 키를 가진 기존 튜플을 제거 할 수 있다.</p>
 
 <p><img src="/assets/img/2018-11-08-opsets/image2.png" alt="image2" /></p>
 
