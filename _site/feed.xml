@@ -1,5 +1,225 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-04-13T18:11:16+09:00</updated><id>http://localhost:4000/</id><title type="html">hackerwins blog</title><subtitle>Done is better than perfect.
-</subtitle><entry><title type="html">Paper 03. OpSets: Sequential Specifications for Replicated Datatypes (Extended Version). 요약</title><link href="http://localhost:4000/paper/2018/11/08/opsets.html" rel="alternate" type="text/html" title="Paper 03. OpSets: Sequential Specifications for Replicated Datatypes (Extended Version). 요약" /><published>2018-11-08T10:33:00+09:00</published><updated>2018-11-08T10:33:00+09:00</updated><id>http://localhost:4000/paper/2018/11/08/opsets</id><content type="html" xml:base="http://localhost:4000/paper/2018/11/08/opsets.html">&lt;p&gt;“OpSets: Sequential Specifications for Replicated Datatypes (Extended Version).” 공부하면서 정리한 내용&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-04-17T08:40:51+09:00</updated><id>http://localhost:4000/</id><title type="html">hackerwins blog</title><subtitle>Done is better than perfect.
+</subtitle><entry><title type="html">Editor 01. Google Docs 같은 실시간 협업 에디터를 만드는 방법</title><link href="http://localhost:4000/crdt/2019/04/17/co-editor.html" rel="alternate" type="text/html" title="Editor 01. Google Docs 같은 실시간 협업 에디터를 만드는 방법" /><published>2019-04-17T08:18:00+09:00</published><updated>2019-04-17T08:18:00+09:00</updated><id>http://localhost:4000/crdt/2019/04/17/co-editor</id><content type="html" xml:base="http://localhost:4000/crdt/2019/04/17/co-editor.html">&lt;h2 id=&quot;실시간-협업-애플리케이션&quot;&gt;실시간 협업 애플리케이션&lt;/h2&gt;
+
+&lt;p&gt;이제는 실시간 협업 애플리케이션이 많은 사용자에게 익숙하다. 대표적인 예로는 Google Docs가 있다. Google Docs는 동시에 여러 명의 사용자가 문서 하나를 수정할 수 있다. 각자 수정하는 문서를 메일로 서로 주고받고 취합할 필요가 없으니 매우 편리하다. 다수의 사람이 동시에 편집해도 결과적으로 문서의 내용은 같아진다. 이런 특징을 Convergence(수렴)라고 부른다.&lt;/p&gt;
+
+&lt;h3 id=&quot;실시간-협업-애플리케이션의-구조-optimistic-replication&quot;&gt;실시간 협업 애플리케이션의 구조 (Optimistic replication)&lt;/h3&gt;
+
+&lt;p&gt;Google Docs와 같은 실시간 협업 애플리케이션의 구조는 Git과 유사하다. 우리는 Git을 사용할 때, 먼저 Local 저장소에 작업한 변경사항을 Commit하고 시간이 흐른 뒤 어느 정도 작업이 완료되면 다른 동료에게 작업한 내용을 공유하기 위해서 Commit을 Remote 저장소에 Push한다. 하지만 Git에서는 Remote 저장소에 먼저 추가된 또 다른 Commit이 있을 때, 해당 브렌치를 Pull하면 Merge conflict가 발생하면 이를 손으로 직접 해결한다.&lt;/p&gt;
+
+&lt;p&gt;이런 스타일의 복제 전략을 취한 시스템을 Optimistic replication system이라고 부르는데, Optimistic replication은 복제본의 내용이 잠시 달라지는 것을 허용하는 복제 전략이다. Optimistic replication system의 구조는 아래와 같은 그림으로 표현할 수 있다.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[사용자 A] -&amp;gt; [사용자 A의 복제본] &amp;lt;- (Operations) -&amp;gt; [사용자 B의 복제본] &amp;lt;- [사용자 B]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;사용자 A는 로컬에서 복제본(Replica)을 먼저 직접 편집하고 같은 문서를 열고 있는 사용자 B의 복제본과 동기화하기 위해서 나중에 로컬 변경사항(Operation)을 전송한다.&lt;/p&gt;
+
+&lt;p&gt;Google Docs에서는 백그라운드에서 이런 종류의 변경사항을 지속해서 전송한다. (5G나 Google Stadia를 보면 미래에는 모르겠지만) 여기에서는 네트워크 지연시간을 고려해야 하는데, 사용자가 편집할 때 변경사항을 전송하고 응답받은 뒤 문서를 업데이트해서 화면에 그리면 사용자는 느리다고 느낄 것이다. 그래서 Google Docs에서는 사용자가 텍스트를 타이핑하면 즉시 변경사항을 로컬 메모리에 있는 복제본에 먼저 반영한 뒤 화면에 표현하고 이후에 비동기적으로 변경사항을 원격지의 복제본에 반영한다. 이 구조 때문에 편집하고 있는 화면에 변경사항이 지연 없이 바로 반영된다.&lt;/p&gt;
+
+&lt;h3 id=&quot;실시간-협업-애플리케이션의-동작-방식-eventual-consistency&quot;&gt;실시간 협업 애플리케이션의 동작 방식 (Eventual consistency)&lt;/h3&gt;
+
+&lt;p&gt;이렇게 한 노드가 다른 노드의 편집과 상관없이 독립적으로 먼저 로컬 데이터를 수정하고 나중에 원격지에 다른 노드와 데이터를 동기화한다면, 동시성 문제를 생각해야 한다. 특히 한 노드가 시스템의 다른 노드와 단절되는 네트워크 파티션이 발생하거나 오프라인 상태에서는 이 문제는 더 분명히 드러난다. 사용자는 메모리에 저장된 문서의 로컬 복제본을 계속해서 편집하고 있지만, 인터넷 연결이 끊어져서 변경사항을 다른 사용자에게 전송할 수 없게 된다. 이 상황에는 우선 로컬 복제본을 계속해서 편집하고 사용자의 화면에 반영해서 프로그램이 잘 동작하는 것처럼 보이게 하고 나중에 네트워크가 복구되면 로컬에 쌓아둔 변경사항을 원격지의 다른 사용자에게 전송한다. 이럴 때도 각자 수정하고 있는 문서가 충돌 없이 병합되어야 한다.&lt;/p&gt;
+
+&lt;p&gt;협업 텍스트 에디터의 예를 들면 아래와 같은 상황을 생각해볼 수 있다.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;초기상태: &quot;안녕.&quot;
+
+~~ 네트워크 단절 ~~
+
+사용자 A: &quot;안녕 Summernote.&quot;
+사용자 B: &quot;안녕. (^_^)&quot;
+
+~~ 네트워크 복구 ~~
+
+결과상태: &quot;안녕 Summernote. (^_^)&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Git에서는 이런 상황에 Merge Conflict가 발생해서 수동으로 충돌을 수정해야 하지만 Google Docs에서는 충돌을 해결하는 팝업 같은 게 나오지는 않는다. Google Docs가 이 충돌을 자동으로 해결하기 때문에 여러 사용자가 하나의 문서를 실시간으로 함께 편집할 수 있다.&lt;/p&gt;
+
+&lt;p&gt;위 예제를 자세히 살펴보면, 사용자 A는 “안녕”과 “.” 사이에 “Summernote”라는 텍스트를 입력했고 사용자 B는 “.” 뒤에 “ (^_^)”를 입력했는데, 결과적으로 데이터가 같아진다. 특정 시점에는 내용이 서로 달랐지만, 결과적으로 같아지는 이런 스타일의 Consistency Model을 Eventual consistency라고 부른다. 동기화 시에 두 사용자의 텍스트 삽입 의도가 모두 반영되어 있으므로 결과상태가 적절해 보인다.&lt;/p&gt;
+
+&lt;p&gt;분산 시스템에는 Consul, Zookeeper 같은 애플리케이션에서 사용하는 노드 간에 합의를 위한 Paxos, Raft 같은 Consensus 알고리즘도 있는데, 겉보기에는 협업 애플리케이션과 구조가 유사해 보이지만 해결하고 있는 문제는 매우 다르다. 네트워크 파티션 상황에 Consensus 알고리즘이 하나가 선택되고 나머지가 취소되어 버려지는 반면에, 협업 애플리케이션의 알고리즘은 여러 사용자의 의도를 모두 반영하면서 병합(Merge)한다.&lt;/p&gt;
+
+&lt;h3 id=&quot;operation-디자인하기&quot;&gt;Operation 디자인하기&lt;/h3&gt;
+
+&lt;p&gt;우리가 개발하고 있는 애플리케이션은 데이터를 Counter, Text, Set, Hashtable, JSON등 다양한 데이터타입으로 표현한다. 먼저 가장 간단한 카운터를 대상으로 변경사항인 Operation을 디자인해보자.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;초기상태: 1
+
+~~ 네트워크 단절 ~~
+
+사용자 A: 1 (+1) = 2 // Increase(1)
+사용자 B: 1 (+2) = 3 // Increase(2)
+
+~~ 네트워크 복구 ~~
+
+기대하는 결과상태: 1 (+1) (+2) = 4
+사용자 A: 2 (+2) = 4 // 사용자 B의 Increase(2) 반영
+사용자 B: 3 (+1) = 4 // 사용자 A의 Increase(1) 반영
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위 예제를 자세히 살펴보면, 사용자 A는 초기상태 1에 1을 더해서 2가 되었고 사용자 B는 1에 2을 더해서 3라는 결과를 화면에서 보았다. 이 상황을 동기화했을 때, 2나 3으로 끝내지 않고 두 사용자의 Increment 의도를 모두 반영해서 4이라는 결과상태로 마무리하는 것이 적절해 보인다.&lt;/p&gt;
+
+&lt;h3 id=&quot;operation을-디자인할-때-고려할-것-convergence-문제&quot;&gt;Operation을 디자인할 때 고려할 것 (Convergence 문제)&lt;/h3&gt;
+
+&lt;p&gt;이렇게 충돌을 자동으로 해결하는 시스템을 디자인할 때, 조금 더 생각해볼 문제가 있는데, 다시 텍스트 예제로 돌아가보자.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;초기상태: &quot;안녕.&quot;
+
+~~ 네트워크 단절 ~~
+
+사용자 A: &quot;안녕 Summernote.&quot; // Insert(2, &quot; Summernote.&quot;)
+사용자 B: &quot;안녕. (^_^)&quot;  // Insert(3, &quot; (^_^)&quot;)
+
+~~ 네트워크 복구 ~~
+
+기대한 결과상태: &quot;안녕 Summernote. (^_^)&quot;
+사용자 A: &quot;안녕  (^_^)Summernote.&quot; // 사용자 B의 Operation Insert(3, &quot; (^_^)&quot;) 반영
+사용자 B: &quot;안녕 Summernote. (^_^)&quot;  // 사용자 A의 Operation Insert(2, &quot;Summernote.&quot;) 반영
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위 예제에서는 Integer Index를 이용해서 Insert Operation을 디자인 했는데, 사용자 A와 사용자 B가 네트워크가 복구한 뒤에 각자의 변경사항을 반영한 결과가 서로 달라질 수 있는 경우를 볼 수 있다. Increase Operation 경우 교환 법칙(commutative property)을 만족하지만, 위에 디자인한 Insert Operation은 만족하지 않는다. 이런 경우 문서의 상태가 갈라져서(divergence) 전체 문서를 주고 받지 않는 이상 다시는 동기화할 수 없게 된다.&lt;/p&gt;
+
+&lt;h3 id=&quot;convergence수렴-문제를-해결하는-방법들&quot;&gt;Convergence(수렴) 문제를 해결하는 방법들&lt;/h3&gt;
+
+&lt;p&gt;지금까지 실시간 협업 애플리케이션의 구조와 이런 시스템을 디자인할 때 해결해야 하는 문제에 대해 알아봤다. 이런 수렴 문제를 해결할 수 있는 알고리즘의 큰 분류에는 OT(Operational Transformation)와 CRDT(Conflict-free replicated data type)가 있다. 사실 OT의 한 알고리즘이 Google Docs 내부에 사용된다. 수렴 문제를 해결하는 알고리즘을 설계하는 것은 어려운 일인데, 일부 OT 알고리즘은 논문 발표 이후에 수렴을 만족하지 못한다는 것이 알려지기도 했다.&lt;/p&gt;
+
+&lt;p&gt;그리고 이 수렴 문제를 데이터 타입에 추상화해서 간단히 한 CRDT가 있다. CRDT 위키백과에서 다양한 데이터타입들, 카운터 타입인 G-Counter, PN-Counter, 셋 타입인 G-Set, 2P-Set, 리스트 타입인 RGA등 다양한 데이터타입을 볼 수 있다. CRDT도 특징에 따라 Operation-based CRDTs와 State-based CRDTs로 나뉘는데, 이 중 Operation-based CRDT는 교환 법칙의 특성을 활용해서 Concurrent 수정의 Operation의 경우 순서가 뒤바뀌어서 실행되어도 동일한 결과 상태가 나오도록 하는 전략을 취한다.&lt;/p&gt;
+
+&lt;p&gt;다음 챕터에는 실시간 협업 에디터를 구현할 수 있는 RGATreeSplit에 대해 알아보는데, 이 데이터타입은 Operation-based CRDTs의 한 종류이다.&lt;/p&gt;
+
+&lt;h2 id=&quot;실시간-협업-에디터를-구현할-수-있는-데이터-타입&quot;&gt;실시간 협업 에디터를 구현할 수 있는 데이터 타입&lt;/h2&gt;
+
+&lt;p&gt;먼저 텍스트 에디터의 텍스트를 표현할 수 있는 RGA에 대해서 알아보자.&lt;/p&gt;
+
+&lt;h3 id=&quot;linkedlist&quot;&gt;LinkedList&lt;/h3&gt;
+
+&lt;p&gt;동작 원리를 간단히 알아보기 위해서 텍스트를 문자(Character)를 원소로 가진 연결형 리스트라고 생각해보자.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[&quot;안&quot;] -&amp;gt; [&quot;녕&quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;“안녕”이라는 문자열을 예로들면 위와 같은 리스트라고 생각해 볼 수 있다.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;초기상태: [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;]
+
+~~ 네트워크 단절 ~~
+
+사용자 A: [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;] -&amp;gt; [&quot;.&quot;]
+사용자 B: [&quot;방&quot;] -&amp;gt; [&quot;갑&quot;] -&amp;gt; [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;]
+
+~~ 네트워크 복구 ~~
+
+결과상태: [&quot;방&quot;] -&amp;gt; [&quot;갑&quot;] -&amp;gt; [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;] -&amp;gt; [&quot;.&quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위 같은 편집의 경우 커서를 서로 다른 위치에 두고 사용자 A는 “안녕” 뒤에 “.”를 입력했고 사용자 B는 “안녕” 앞에 “방갑”을 입력했기 때문에 결과상태에 문제가 없다.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;초기상태: [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;]
+
+~~ 네트워크 단절 ~~
+
+사용자 A: [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;] -&amp;gt; [&quot;.&quot;]
+사용자 B: [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;] -&amp;gt; [&quot;!&quot;]
+
+~~ 네트워크 복구 ~~
+
+결과상태: [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;] -&amp;gt; [&quot;.&quot;] -&amp;gt; [&quot;!&quot;] // [&quot;.&quot;]와 [&quot;!&quot;]의 순서를 결정해야 함
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;하지만 두 번째 예제의 경우 같은 위치인 &lt;code class=&quot;highlighter-rouge&quot;&gt;[&quot;녕&quot;]&lt;/code&gt; 뒤에 사용자 A, B가 값을 입력한다면 사용자 A의 &lt;code class=&quot;highlighter-rouge&quot;&gt;[&quot;.&quot;]&lt;/code&gt;와 사용자 B의 &lt;code class=&quot;highlighter-rouge&quot;&gt;[&quot;!&quot;]&lt;/code&gt;의 순서를 결정해야 한다. 그래서 순서를 결정할 수 있는 장치가 필요하다. 이를 RGA에서는 분산 시스템에서 사용하는 논리시계를 이용해서 처리했다.&lt;/p&gt;
+
+&lt;h3 id=&quot;logical-clock&quot;&gt;Logical Clock&lt;/h3&gt;
+
+&lt;p&gt;분산 시스템에서 각 노드의 시계를 정확하게 똑같이 동기화하는 건 매우 어려운 문제이다. 특정 시간을 노드에 전송해서 동기화하려고 해도 이 전송에 지연시간이 발생하고 각각이 정확히 얼마나 걸릴지 모르기 때문이다. 또 물리 시계를 정확하게 똑같이 동기화 할 수 있다고 하더라도 동일한 시간에 발생한 이벤트의 순서를 결정해야 했다. 분산 시스템에는 이런 문제를 해결할 수 있는 Lamport clock과 같은 논리시계가 있는데, 시스템 내에 발생한 이벤트들을 시스템 내부 전체에서 유일한 순서(Total order)를 정의할 수 있다.&lt;/p&gt;
+
+&lt;p&gt;여기에서는 대표적인 논리시계인 Lamport clock을 활용해서 이벤트의 순서를 정하는 방법에 대해 알아본다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2019-04-17-co-editor/image02.png&quot; alt=&quot;image02&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;출처: “멀티 디바이스 동기화 플랫폼과 분산시스템의 기초” - 노현걸&lt;/p&gt;
+
+&lt;p&gt;가장 우측 그림은 노드 1, 2가 있을 때, 발생할 수 있는 이벤트의 예를 보여준다. 가장 좌측 그림의 실선은 인과(Casual) 관계, 점선은 Concurrent 관계를 표현했다. 가운데 그림은 이 이벤트 들의 Total Order를 보여준다.&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;compare&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Clock&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;clockA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Clock&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;clockB&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;compare&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;compare&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clockA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;timestamp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;clockB&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;timestamp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;compare&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;compare&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;compare&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clockA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;nodeId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;clockB&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;nodeId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;논리 시계인 Clock이 timestamp와 nodeId를 갖고 있다고 가정하면 분산 시스템 내에서 발생한 전체 이벤트의 순서를 위 함수로 알아낼 수 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;rga-linkedlist--logical-clock&quot;&gt;RGA: LinkedList + Logical Clock&lt;/h3&gt;
+
+&lt;p&gt;이런 논리 시계를 도입 했다고 가정하면 이전 데이터를 다음과 같이 표현할 수 있다.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;반영 전: [&quot;안&quot;] -&amp;gt; [&quot;녕&quot;]
+반영 후: [T1-A: &quot;안&quot;] -&amp;gt; [T2-A: &quot;녕&quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;요소(Element)에 값 외에 논리 시계가 추가되었는데, 이 논리 시계는 요소를 삽입한 논리적 시간을 나타낸다.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;초기상태: [T1-A: &quot;안&quot;] -&amp;gt; [T2-A: &quot;녕&quot;]
+
+~~ 네트워크 단절 ~~
+
+사용자 A: [T1-A:&quot;안&quot;] -&amp;gt; [T2-A:&quot;녕&quot;] -&amp;gt; [T3-A:&quot;.&quot;]
+사용자 B: [T1-A:&quot;안&quot;] -&amp;gt; [T2-A:&quot;녕&quot;] -&amp;gt; [T3-B:&quot;!&quot;]
+
+~~ 네트워크 복구 ~~
+
+결과상태: [T1-A:&quot;안&quot;] -&amp;gt; [T2-A:&quot;녕&quot;] -&amp;gt; [T3-A:&quot;.&quot;] -&amp;gt; [T3-B:&quot;!&quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;같은 위치인 &lt;code class=&quot;highlighter-rouge&quot;&gt;[&quot;녕&quot;]&lt;/code&gt; 뒤에 사용자 A, B가 값을 입력했지만, 사용자 A의 &lt;code class=&quot;highlighter-rouge&quot;&gt;[&quot;.&quot;]&lt;/code&gt;와 사용자 B의 &lt;code class=&quot;highlighter-rouge&quot;&gt;[&quot;!&quot;]&lt;/code&gt;의 순서를 비교했을 때, 논리시계를 사용하므로 순서를 정할 수 있는데, 여기서는 &lt;code class=&quot;highlighter-rouge&quot;&gt;T3-A&lt;/code&gt;가 &lt;code class=&quot;highlighter-rouge&quot;&gt;T3-B&lt;/code&gt;보다 앞선다고 가정하고 결과상태처럼 둘의 순서를 결정할 수 있다. 위 예제처럼 CRDT는 데이터를 표현하는 값외에 논리시계나 삭제를 표시하는 Tombstone과 같은 메타(Meta)가 더 포함된다.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;초기상태: [T1-A: &quot;안&quot;] -&amp;gt; [T2-A: &quot;녕&quot;]
+
+~~ 네트워크 단절 ~~
+
+사용자 A: [T1-A:&quot;안&quot;] -&amp;gt; [T2-A:&quot;녕&quot;] -&amp;gt; [T3-A:&quot;.&quot;] // InsertAfter(T3-A, T2-A, &quot;.&quot;)
+사용자 B: [T1-A:&quot;안&quot;] -&amp;gt; [T2-A:&quot;녕&quot;] -&amp;gt; [T3-B:&quot;!&quot;] // InsertAfter(T3-B, T2-A, &quot;!&quot;)
+
+~~ 네트워크 복구 ~~
+
+기대한 결과상태: [T1-A:&quot;안&quot;] -&amp;gt; [T2-A:&quot;녕&quot;] -&amp;gt; [T3-A:&quot;.&quot;] -&amp;gt; [T3-B:&quot;!&quot;]
+사용자 A: [T1-A:&quot;안&quot;] -&amp;gt; [T2-A:&quot;녕&quot;] -&amp;gt; [T3-A:&quot;.&quot;] -&amp;gt; [T3-B:&quot;!&quot;] // 사용자 B의 Operation InsertAfter(T3-B, T2-A, &quot;!&quot;) 반영
+사용자 B: [T1-A:&quot;안&quot;] -&amp;gt; [T2-A:&quot;녕&quot;] -&amp;gt; [T3-A:&quot;.&quot;] -&amp;gt; [T3-B:&quot;!&quot;] // 사용자 A의 Operation InsertAfter(T3-A, T2-A, &quot;.&quot;) 반영
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;RGA는 요소의 ID로 논리 시계를 사용하는 리스트형 자료 구조라 생각할 수 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;rgatreesplit&quot;&gt;RGATreeSplit&lt;/h3&gt;
+
+&lt;p&gt;지금까지 알아본 RGA를 Text로 사용할 때 성능을 개선할 수 있는 포인트가 더 있는데, 로컬 실행 복잡도나 공간 복잡도를 개선한 버전이 RGATreeSplit이다. RGATreeSplit은 Apache commons에 있는 TreeList처럼 LinkedList 대신 Tree 구조를 도입해서 로컬 실행시간을 개선하고 각 요소에 문자가 아닌 문자열을 보관해서 공간을 작게 사용한다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2019-04-17-co-editor/image01.png&quot; alt=&quot;image01&quot; /&gt;
+출처: https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf&lt;/p&gt;
+
+&lt;p&gt;좌측 Upstream은 Local에서 편집 실행시간, 우측 Downstream은 Remote에서 편집 실행시간을 뜻한다. Execution time이 낮을 수록 성능이 좋다.&lt;/p&gt;
+
+&lt;h2 id=&quot;마무리&quot;&gt;마무리&lt;/h2&gt;
+
+&lt;p&gt;지금까지 Google Docs와 같은 실시간 협업 애플리케이션의 구조에 대해 간략히 살펴보고 실시간 협업 에디터를 구현하는데, 사용할 수 있는 CRDT 데이터타입인 RGATreeSplit에 대해 알아봤다.&lt;/p&gt;
+
+&lt;p&gt;CRDT는 협업 애플리케이션 뿐 아니라 지역적으로 떨어진 IDC 간에 DB를 Master-Master로 운영하는 Geo Distribution DB 시스템에도 활용된다(Redis Enterprise, Azure Cosmos DB).&lt;/p&gt;
+
+&lt;p&gt;CRDT는 Facebook 규모의 Like Counter라든지 캐시등 다양한 형식으로도 활용할 수 있어 보인다.&lt;/p&gt;
+
+&lt;p&gt;참고 링크들&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Optimistic_replication&quot;&gt;https://en.wikipedia.org/wiki/Optimistic_replication&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://raft.github.io/&quot;&gt;https://raft.github.io/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Lamport_timestamps&quot;&gt;https://en.wikipedia.org/wiki/Lamport_timestamps&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type&quot;&gt;https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/list/TreeList.html&quot;&gt;https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/list/TreeList.html&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://csl.skku.edu/papers/jpdc11.pdf&quot;&gt;http://csl.skku.edu/papers/jpdc11.pdf&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf&quot;&gt;https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/ko-kr/azure/cosmos-db/how-to-multi-master&quot;&gt;https://docs.microsoft.com/ko-kr/azure/cosmos-db/how-to-multi-master&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://redislabs.com/redis-enterprise/&quot;&gt;https://redislabs.com/redis-enterprise/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name></name></author><summary type="html">실시간 협업 애플리케이션</summary></entry><entry><title type="html">Paper 03. OpSets: Sequential Specifications for Replicated Datatypes (Extended Version). 요약</title><link href="http://localhost:4000/paper/2018/11/08/opsets.html" rel="alternate" type="text/html" title="Paper 03. OpSets: Sequential Specifications for Replicated Datatypes (Extended Version). 요약" /><published>2018-11-08T10:33:00+09:00</published><updated>2018-11-08T10:33:00+09:00</updated><id>http://localhost:4000/paper/2018/11/08/opsets</id><content type="html" xml:base="http://localhost:4000/paper/2018/11/08/opsets.html">&lt;p&gt;“OpSets: Sequential Specifications for Replicated Datatypes (Extended Version).” 공부하면서 정리한 내용&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;Original paper link: &lt;a href=&quot;https://arxiv.org/abs/1805.04263&quot;&gt;link&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -849,14 +1069,4 @@ List: 애플리케이션에서 지정한 순서의 자식을 갖고 있는 노�
   &lt;p&gt;Your time is limited, so don’t waste it living someone else’s life. Don’t be trapped by dogma — which is living with the results of other people’s thinking. Don’t let the noise of others’ opinions drown out your own inner voice. And most important, have the courage to follow your heart and intuition. They somehow already know what you truly want to become. Everything else is secondary.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;타성에 젖으면 끝이다. 용기를 갖으라고…&lt;/p&gt;</content><author><name></name></author><summary type="html">영화 매트릭스(Matrix)에서 모피어스는 주인공 네오(키아누 리브스 분)에게 빨간색 약과 파란색 약 중 하나를 선택하라고 말한다. 파란색 약을 먹는다면 매트릭스의 세계 속에서 편하게 살 수 있었지만 네오는 ‘진짜 현실’에 대한 호기심으로 빨간색 약을 선택한다.</summary></entry><entry><title type="html">Idea 00. 유능하고 경험 많은 개발자는 어디에 모여 살까?</title><link href="http://localhost:4000/idea/2011/03/20/where-is-the-developer.html" rel="alternate" type="text/html" title="Idea 00. 유능하고 경험 많은 개발자는 어디에 모여 살까?" /><published>2011-03-20T13:15:00+09:00</published><updated>2011-03-20T13:15:00+09:00</updated><id>http://localhost:4000/idea/2011/03/20/where-is-the-developer</id><content type="html" xml:base="http://localhost:4000/idea/2011/03/20/where-is-the-developer.html">&lt;p&gt;유능하고 경험 많은 개발자는 어디에 모여 살까? 우리 개발자는 매니저가 되는 것이 목표인가?&lt;/p&gt;
-
-&lt;p&gt;2006년 가을 개발자라는 직업을 갖게되면서부터 자연스레 생긴 궁금증이다. 5년이 다되어 가는 시간동안 경험 많은 개발자들은 보기 힘었다. 왜 대부분의 개발자들은 매니저에 비해 미숙한거 같고 어리게만 느껴질까? (실제로 대부분의 개발자는 매니저에 비해 나이가 어리거나 그들의 부하직원인것 같다.)&lt;/p&gt;
-
-&lt;p&gt;우리는 유능한 개발자들이 특정 연차가 되었을때 심화된 엔지니어링 테크를 타는 것이 아니고 매니저 테크를 타는 것을 쉽게 목격할 수 있다. 그들의 업무는 모델링, 알고리즘 풀어먹기, 불꽃 코딩 등등에서 회의하기, 메일보내기 답하기, 회의하기, 회의하기, 회의하기, 팀원이나 프로젝트의 일정이나 스펙을 관리하기, 회의하기로 바뀐다. 이제 좀 제대로 테크닉을 발휘 하면서 후임양성할때가 되었는데 개발로 부터 자연스럽게 멀어진다.&lt;/p&gt;
-
-&lt;p&gt;일부(특히 개발을 살짝 맛만 봤다가 운이 좋게 매니저 테크를 탄) 매니저들은 개발은 쉬운 것, 애들이나 하는 것이라고 말하기도 한다.&lt;/p&gt;
-
-&lt;p&gt;짧은 내 경험에서 알게된  개발(여기서 말하는 개발은 주로 엔지니어링)은 어렵다. 많은 것을 공부해야한다. 다양한 프로그래밍 언어는 물론이고 때로는 큰 규모의 프로그램을 구조화 하는 모델링 기법 혹은 알고리즘들, 수학에 관련되었을 수도 있고 새로나온 플렛폼 혹은 여러가지 프로그래밍 페러다임일 수도 있다. 최적의 제품을 제대로 만들기 위해서는 반드시 무엇인 가를 알아야 하고 공부해야할 경우가 있다. 개발자는 경력이 쌓일 수록 이런 것들을 공부해야 한다.(만약 아닌것 같고 그게 이글을 읽고 있는 사람이라면 제발 공부해라.) 특정 상황에선 현재로서는 해결할 수 없는 문제가 발생되기도 한다.  끊임없이 실험하고 방법을 찾으려고 시도할때는 꿈에서도 생각할 정도로 몰입해야하는 상황도 생긴다. 개발자라는 직업이 현실에는 의사, 변호사 같은 다른 전문직보다 진입장벽이 낮지만 그들은 사실 전문가이어야하고 전문직이어야 한다. 그래야 제대로 만들 수 있다.&lt;/p&gt;
-
-&lt;p&gt;물론 매니저라는 직업이 나쁘다는 말을 하고 싶은 것이 아니다. 그들은 프로젝트에 필요한 직업이고 해야할 일이 있다. 매니지먼트 스킬은 엔지니어링 스킬과 조금 다른 테크이다. 난 단지 유능한 개발자들이 어설픈 매니저(물론 매니저가 더 맞고 천직이라고 느껴지면 가도 좋다.)가 되지 않고 유능한 개발자로 남아서 자신이 가지고 있는 기술을 풀어 먹었으면 좋을것 같다는 생각을 하는 것이다. 그러면 좋은 소프트웨어가 좀 더 많이 나오지 않을까? 하는 생각이든다.&lt;/p&gt;</content><author><name></name></author><summary type="html">유능하고 경험 많은 개발자는 어디에 모여 살까? 우리 개발자는 매니저가 되는 것이 목표인가?</summary></entry></feed>
+&lt;p&gt;타성에 젖으면 끝이다. 용기를 갖으라고…&lt;/p&gt;</content><author><name></name></author><summary type="html">영화 매트릭스(Matrix)에서 모피어스는 주인공 네오(키아누 리브스 분)에게 빨간색 약과 파란색 약 중 하나를 선택하라고 말한다. 파란색 약을 먹는다면 매트릭스의 세계 속에서 편하게 살 수 있었지만 네오는 ‘진짜 현실’에 대한 호기심으로 빨간색 약을 선택한다.</summary></entry></feed>
