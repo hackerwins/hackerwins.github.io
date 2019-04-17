@@ -83,7 +83,7 @@
 
 <h3 id="실시간-협업-애플리케이션의-구조-optimistic-replication">실시간 협업 애플리케이션의 구조 (Optimistic replication)</h3>
 
-<p>Google Docs와 같은 실시간 협업 애플리케이션의 구조는 Git과 유사하다. 우리는 Git을 사용할 때, 먼저 Local 저장소에 작업한 변경사항을 Commit하고 시간이 흐른 뒤 어느 정도 작업이 완료되면 다른 동료에게 작업한 내용을 공유하기 위해서 Commit을 Remote 저장소에 Push한다. 하지만 Git에서는 Remote 저장소에 먼저 추가된 또 다른 Commit이 있을 때, 해당 브렌치를 Pull하면 Merge conflict가 발생하면 이를 손으로 직접 해결한다.</p>
+<p>Google Docs와 같은 실시간 협업 애플리케이션의 구조는 Git과 유사하다. 우리는 Git을 사용할 때, 먼저 Local 저장소에 작업한 변경사항을 Commit하고 시간이 흐른 뒤 어느 정도 작업이 완료되면 다른 동료에게 작업한 내용을 공유하기 위해서 Commit을 Remote 저장소에 Push한다. 하지만 Git에서는 Remote 저장소에 먼저 추가된 또 다른 Commit이 있을 때, 해당 브렌치를 Pull한 뒤 Merge conflict가 발생하면 이를 손으로 직접 해결한다.</p>
 
 <p>이런 스타일의 복제 전략을 취한 시스템을 Optimistic replication system이라고 부르는데, Optimistic replication은 복제본의 내용이 잠시 달라지는 것을 허용하는 복제 전략이다. Optimistic replication system의 구조는 아래와 같은 그림으로 표현할 수 있다.</p>
 
@@ -273,7 +273,7 @@
 <p>지금까지 알아본 RGA를 Text로 사용할 때 성능을 개선할 수 있는 포인트가 더 있는데, 로컬 실행 복잡도나 공간 복잡도를 개선한 버전이 RGATreeSplit이다. RGATreeSplit은 Apache commons에 있는 TreeList처럼 LinkedList 대신 Tree 구조를 도입해서 로컬 실행시간을 개선하고 각 요소에 문자가 아닌 문자열을 보관해서 공간을 작게 사용한다.</p>
 
 <p><img src="/assets/img/2019-04-17-co-editor/image01.png" alt="image01" />
-출처: https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf</p>
+출처: rgasplit-group2016-11.pdf</p>
 
 <p>좌측 Upstream은 Local에서 편집 실행시간, 우측 Downstream은 Remote에서 편집 실행시간을 뜻한다. Execution time이 낮을 수록 성능이 좋다.</p>
 
@@ -288,13 +288,13 @@
 <p>참고 링크들</p>
 
 <ul>
-  <li><a href="https://en.wikipedia.org/wiki/Optimistic_replication">https://en.wikipedia.org/wiki/Optimistic_replication</a></li>
-  <li><a href="https://raft.github.io/">https://raft.github.io/</a></li>
-  <li><a href="https://en.wikipedia.org/wiki/Lamport_timestamps">https://en.wikipedia.org/wiki/Lamport_timestamps</a></li>
-  <li><a href="https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type">https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type</a></li>
-  <li><a href="https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/list/TreeList.html">https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/list/TreeList.html</a></li>
-  <li><a href="http://csl.skku.edu/papers/jpdc11.pdf">http://csl.skku.edu/papers/jpdc11.pdf</a></li>
-  <li><a href="https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf">https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Optimistic_replication">wiki/Optimistic_replication</a></li>
+  <li><a href="https://raft.github.io/">raft.github.io</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Lamport_timestamps">wiki/Lamport_timestamps</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type">wiki/Conflict-free_replicated_data_type</a></li>
+  <li><a href="https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/list/TreeList.html">TreeList.html</a></li>
+  <li><a href="http://csl.skku.edu/papers/jpdc11.pdf">jpdc11.pdf</a></li>
+  <li><a href="https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf">rgasplit-group2016-11.pdf</a></li>
   <li><a href="https://docs.microsoft.com/ko-kr/azure/cosmos-db/how-to-multi-master">https://docs.microsoft.com/ko-kr/azure/cosmos-db/how-to-multi-master</a></li>
   <li><a href="https://redislabs.com/redis-enterprise/">https://redislabs.com/redis-enterprise/</a></li>
 </ul>

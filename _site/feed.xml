@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-04-17T08:40:51+09:00</updated><id>http://localhost:4000/</id><title type="html">hackerwins blog</title><subtitle>Done is better than perfect.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-04-18T07:53:27+09:00</updated><id>http://localhost:4000/</id><title type="html">hackerwins blog</title><subtitle>Done is better than perfect.
 </subtitle><entry><title type="html">Editor 01. Google Docs 같은 실시간 협업 에디터를 만드는 방법</title><link href="http://localhost:4000/crdt/2019/04/17/co-editor.html" rel="alternate" type="text/html" title="Editor 01. Google Docs 같은 실시간 협업 에디터를 만드는 방법" /><published>2019-04-17T08:18:00+09:00</published><updated>2019-04-17T08:18:00+09:00</updated><id>http://localhost:4000/crdt/2019/04/17/co-editor</id><content type="html" xml:base="http://localhost:4000/crdt/2019/04/17/co-editor.html">&lt;h2 id=&quot;실시간-협업-애플리케이션&quot;&gt;실시간 협업 애플리케이션&lt;/h2&gt;
 
 &lt;p&gt;이제는 실시간 협업 애플리케이션이 많은 사용자에게 익숙하다. 대표적인 예로는 Google Docs가 있다. Google Docs는 동시에 여러 명의 사용자가 문서 하나를 수정할 수 있다. 각자 수정하는 문서를 메일로 서로 주고받고 취합할 필요가 없으니 매우 편리하다. 다수의 사람이 동시에 편집해도 결과적으로 문서의 내용은 같아진다. 이런 특징을 Convergence(수렴)라고 부른다.&lt;/p&gt;
 
 &lt;h3 id=&quot;실시간-협업-애플리케이션의-구조-optimistic-replication&quot;&gt;실시간 협업 애플리케이션의 구조 (Optimistic replication)&lt;/h3&gt;
 
-&lt;p&gt;Google Docs와 같은 실시간 협업 애플리케이션의 구조는 Git과 유사하다. 우리는 Git을 사용할 때, 먼저 Local 저장소에 작업한 변경사항을 Commit하고 시간이 흐른 뒤 어느 정도 작업이 완료되면 다른 동료에게 작업한 내용을 공유하기 위해서 Commit을 Remote 저장소에 Push한다. 하지만 Git에서는 Remote 저장소에 먼저 추가된 또 다른 Commit이 있을 때, 해당 브렌치를 Pull하면 Merge conflict가 발생하면 이를 손으로 직접 해결한다.&lt;/p&gt;
+&lt;p&gt;Google Docs와 같은 실시간 협업 애플리케이션의 구조는 Git과 유사하다. 우리는 Git을 사용할 때, 먼저 Local 저장소에 작업한 변경사항을 Commit하고 시간이 흐른 뒤 어느 정도 작업이 완료되면 다른 동료에게 작업한 내용을 공유하기 위해서 Commit을 Remote 저장소에 Push한다. 하지만 Git에서는 Remote 저장소에 먼저 추가된 또 다른 Commit이 있을 때, 해당 브렌치를 Pull한 뒤 Merge conflict가 발생하면 이를 손으로 직접 해결한다.&lt;/p&gt;
 
 &lt;p&gt;이런 스타일의 복제 전략을 취한 시스템을 Optimistic replication system이라고 부르는데, Optimistic replication은 복제본의 내용이 잠시 달라지는 것을 허용하는 복제 전략이다. Optimistic replication system의 구조는 아래와 같은 그림으로 표현할 수 있다.&lt;/p&gt;
 
@@ -195,7 +195,7 @@
 &lt;p&gt;지금까지 알아본 RGA를 Text로 사용할 때 성능을 개선할 수 있는 포인트가 더 있는데, 로컬 실행 복잡도나 공간 복잡도를 개선한 버전이 RGATreeSplit이다. RGATreeSplit은 Apache commons에 있는 TreeList처럼 LinkedList 대신 Tree 구조를 도입해서 로컬 실행시간을 개선하고 각 요소에 문자가 아닌 문자열을 보관해서 공간을 작게 사용한다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/img/2019-04-17-co-editor/image01.png&quot; alt=&quot;image01&quot; /&gt;
-출처: https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf&lt;/p&gt;
+출처: rgasplit-group2016-11.pdf&lt;/p&gt;
 
 &lt;p&gt;좌측 Upstream은 Local에서 편집 실행시간, 우측 Downstream은 Remote에서 편집 실행시간을 뜻한다. Execution time이 낮을 수록 성능이 좋다.&lt;/p&gt;
 
@@ -210,13 +210,13 @@
 &lt;p&gt;참고 링크들&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Optimistic_replication&quot;&gt;https://en.wikipedia.org/wiki/Optimistic_replication&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://raft.github.io/&quot;&gt;https://raft.github.io/&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Lamport_timestamps&quot;&gt;https://en.wikipedia.org/wiki/Lamport_timestamps&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type&quot;&gt;https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/list/TreeList.html&quot;&gt;https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/list/TreeList.html&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://csl.skku.edu/papers/jpdc11.pdf&quot;&gt;http://csl.skku.edu/papers/jpdc11.pdf&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf&quot;&gt;https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Optimistic_replication&quot;&gt;wiki/Optimistic_replication&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://raft.github.io/&quot;&gt;raft.github.io&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Lamport_timestamps&quot;&gt;wiki/Lamport_timestamps&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type&quot;&gt;wiki/Conflict-free_replicated_data_type&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/list/TreeList.html&quot;&gt;TreeList.html&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://csl.skku.edu/papers/jpdc11.pdf&quot;&gt;jpdc11.pdf&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf&quot;&gt;rgasplit-group2016-11.pdf&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/ko-kr/azure/cosmos-db/how-to-multi-master&quot;&gt;https://docs.microsoft.com/ko-kr/azure/cosmos-db/how-to-multi-master&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://redislabs.com/redis-enterprise/&quot;&gt;https://redislabs.com/redis-enterprise/&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</content><author><name></name></author><summary type="html">실시간 협업 애플리케이션</summary></entry><entry><title type="html">Paper 03. OpSets: Sequential Specifications for Replicated Datatypes (Extended Version). 요약</title><link href="http://localhost:4000/paper/2018/11/08/opsets.html" rel="alternate" type="text/html" title="Paper 03. OpSets: Sequential Specifications for Replicated Datatypes (Extended Version). 요약" /><published>2018-11-08T10:33:00+09:00</published><updated>2018-11-08T10:33:00+09:00</updated><id>http://localhost:4000/paper/2018/11/08/opsets</id><content type="html" xml:base="http://localhost:4000/paper/2018/11/08/opsets.html">&lt;p&gt;“OpSets: Sequential Specifications for Replicated Datatypes (Extended Version).” 공부하면서 정리한 내용&lt;/p&gt;
