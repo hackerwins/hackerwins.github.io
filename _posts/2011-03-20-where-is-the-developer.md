@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Idea 00. 유능하고 경험 많은 개발자는 어디에 모여 살까?"
+title:  "유능하고 경험 많은 개발자는 어디에 모여 살까?"
 date:   2011-03-20 13:15:00 +0900
 categories: idea
 ---

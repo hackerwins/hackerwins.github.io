@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Idea 03. 증상만 치료하지 말고, 원인을 제거하라."
+title:  "증상만 치료하지 말고, 원인을 제거하라."
 date:   2011-11-14 23:09:00 +0900
 categories: idea
 ---

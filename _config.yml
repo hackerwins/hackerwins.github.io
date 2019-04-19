@@ -14,19 +14,32 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: hackerwins blog
-email: susukang98@gmail.com
-description: > # this means to ignore newlines until "baseurl:"
+description: >- # this means to ignore newlines until "baseurl:"
   Done is better than perfect.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: hackerwins
-github_username:  hackerwins
+
+# Google Analytics
+google_analytics: UA-42438082-2
+
+author:
+  email: susukang98@gmail.com
+  twitter_username: hackerwins
+  github_username:  hackerwins
 
 # Build settings
 markdown: kramdown
-theme: minima
+remote_theme: chesterhow/tale
+
 plugins:
   - jekyll-feed
-exclude:
-  - Gemfile
-  - Gemfile.lock
+  - jekyll-paginate
+  - jekyll-seo-tag
+  - jekyll-remote-theme
+
+# Permalinks
+# permalink:      /:year-:month-:day/:title
+paginate:       5
+
+# Excludes
+exclude: [ Gemfile, Gemfile.lock, tale.gemspec ]

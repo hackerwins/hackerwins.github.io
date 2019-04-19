@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Idea 04. 소프트웨어 품질과 개발문화"
+title:  "소프트웨어 품질과 개발문화"
 date:   2011-11-28 18:34:00 +0900
 categories: idea
 ---

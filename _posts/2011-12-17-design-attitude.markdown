@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Idea 05. 디자인 태도"
+title:  "디자인 태도"
 date:   2011-12-17 11:31:00 +0900
 categories: idea
 ---

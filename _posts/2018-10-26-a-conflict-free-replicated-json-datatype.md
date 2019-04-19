@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Paper 02. A Conflict-Free Replicated JSON Datatype. 요약"
+title:  "A Conflict-Free Replicated JSON Datatype. 요약"
 date:   2018-10-26 13:14:00 +0900
 categories: paper
 ---

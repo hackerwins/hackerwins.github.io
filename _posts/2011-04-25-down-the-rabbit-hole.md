@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Idea 01. 토끼굴 속으로"
+title:  "토끼굴 속으로"
 date:   2011-04-25 21:15:00 +0900
 categories: idea
 ---

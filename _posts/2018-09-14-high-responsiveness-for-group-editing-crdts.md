@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Paper 01. High Responsiveness for Group Editing CRDTs. 요약"
+title:  "High Responsiveness for Group Editing CRDTs. 요약"
 date:   2018-09-14 10:00:00 +0900
 categories: paper
 ---
