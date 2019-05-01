@@ -1,11 +1,29 @@
-#node_modules
-node_modules/*
+# Created by https://www.gitignore.io/api/vim,jekyll
+# Edit at https://www.gitignore.io/?templates=vim,jekyll
 
-# vim & emacs
-*.swp
+### Jekyll ###
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
 
-# linux backup files
+### Vim ###
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+
+# Temporary
+.netrwhist
 *~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
 
-# sass cache
-.sass-cache/*
+# End of https://www.gitignore.io/api/vim,jekyll
