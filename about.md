@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: about
 title: About
 date:   2019-04-19 13:15:00 +0900
 permalink: /about/
