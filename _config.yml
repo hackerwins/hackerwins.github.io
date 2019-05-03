@@ -37,8 +37,13 @@ plugins:
   - jekyll-remote-theme
 
 # Permalinks
-# permalink:      /:year-:month-:day/:title
+permalink:      /:year-:month-:day/:title
 paginate:       5
 
 # Excludes
 exclude: [ Gemfile, Gemfile.lock, tale.gemspec ]
+
+# Tagging
+tag_page_layout: tag_page
+tag_page_dir: tags
+tag_permalink_style: pretty

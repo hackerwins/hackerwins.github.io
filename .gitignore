@@ -22,7 +22,7 @@ Session.vim
 .netrwhist
 *~
 # Auto-generated tag files
-tags
+# tags ## XXX ignore tags
 # Persistent undo
 [._]*.un~
 

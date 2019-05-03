@@ -3,6 +3,8 @@ layout: default
 ---
 
 <div class="post">
+  <h1 class="post-title">{{ page.title }}</h1>
+  <div class="post-line"></div>
   <div class="post-info">
     <span>Written by</span>
     {% if page.author %}
@@ -12,13 +14,19 @@ layout: default
     {% endif %}
 
     {% if page.date %}
-      <br>
       <span>on&nbsp;</span><time datetime="{{ page.date }}">{{ page.date | date: "%B %d, %Y" }}</time>
     {% endif %}
+    <br>
+    <br>
+    <div class="tag-cloud">
+      {% for tag in page.tags %}
+        {% capture tag_name %}{{ tag }}{% endcapture %}
+        <a href="/{{ site.tag_page_dir }}/{{ tag_name }}"><nobr>{{ tag_name }}</nobr></a>&nbsp;
+      {% endfor %}
+    </div>
+    <br>
   </div>
 
-  <h1 class="post-title">{{ page.title }}</h1>
-  <div class="post-line"></div>
 
   {{ content }}
 

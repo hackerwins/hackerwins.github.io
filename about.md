@@ -19,7 +19,7 @@ permalink: /about/
  - 2013: [50가지 예제로 배우는 노드 프로그래밍](http://www.acornpub.co.kr/book/node-cookbook)
  - 2012: [Ext JS 4 First Look 한국어판](http://www.acornpub.co.kr/book/extjs4-first-look)
 
-경력, [LinkedIn](https://www.linkedin.com/in/hackerwins/)
+경력 [LinkedIn](https://www.linkedin.com/in/hackerwins/)
 
  - 2017 ~ : 칼레이도 개발 @ 네이버
  - 2015 ~ 2017: 카카오톡 플러스친구 개발 @ 카카오

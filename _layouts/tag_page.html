@@ -1,0 +1,20 @@
+---
+layout: default
+---
+
+<div>&nbsp;</div>
+
+{% include tag_cloud.html %}
+
+<h2>{{ page.tag }}</h2>
+
+<ul>
+  {% for post in site.tags[page.tag] %}
+  <li>
+    <a href="{{ post.url }}">{{ post.title }}</a><span class="post-info"> on {{ post.date | date_to_string }}</span>
+  </li>
+  {% endfor %}
+</ul>
+
+{% for post in page.posts %}
+{% endfor %}
