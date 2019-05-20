@@ -22,7 +22,7 @@ def binary_search(key, node):
         return binary_search(key, node.right)
 ```
 
-BST는 n개의 아이템에서 평균 O(log n), 최악에는 O(n) 시간 복잡도로 특정 아이템을 찾을 수 있다. 또 inorder traversal를 이용하면 BST에서 순서대로 아이템을 순회할 수 있다. 유독 Depth-first search(DFS)중 inorder traversal만 "iterative로 inorder traversal을 구현하시오." 같은 문제로 코딩 인터뷰에 더 등장하는 것 같다.
+BST는 n개의 아이템에서 평균 $$O(\log{}n)$$, 최악에는 $$O(n)$$ 시간 복잡도로 특정 아이템을 찾을 수 있다. 또 inorder traversal를 이용하면 BST에서 순서대로 아이템을 순회할 수 있다. 유독 Depth-first search(DFS)중 inorder traversal만 "iterative로 inorder traversal을 구현하시오." 같은 문제로 코딩 인터뷰에 더 등장하는 것 같다.
 
 ```python
 def inorder_traversal(node):
@@ -40,7 +40,7 @@ BST의 성능은 트리의 균형(balance)와 밀접한 관련이 있다. 균형
 
 # Weight 속성의 Search tree
 
-Key가 아닌 Weight 속성을 사용해서 Search tree를 구성하면 특정 index를 log(n)으로 찾을 수 있는 리스트 형 자료구조를 구현할 수 있다. Weight 속성을 이용한 BST의 get은 아래와 같다.
+Key가 아닌 Weight 속성을 사용해서 Search tree를 구성하면 특정 index를 $$log_2(n)$$ 이내로 찾을 수 있는 리스트 형 자료구조를 구현할 수 있다. Weight 속성을 이용한 BST의 get은 아래와 같다.
 
 ```java
 public Node get(Node node, int index) {
