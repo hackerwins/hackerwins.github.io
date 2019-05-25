@@ -1,6 +1,6 @@
 ---
 layout: tag_page
-title: "Tag: pagination"
-tag: pagination
+title: "Tag: team"
+tag: team
 robots: noindex
 ---

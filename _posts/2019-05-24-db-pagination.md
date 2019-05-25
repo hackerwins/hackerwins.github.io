@@ -10,7 +10,7 @@ tags: sql data-structure
 
 대학 4학년 때쯤, 직업으로 개발자가 되고 싶었다. 영상 처리 랩에서 학부생으로 얼굴 인식(Face detection) 관련 논문을 읽고 코딩하는 일을 하며 용돈을 벌었지만 막막했다. 간단한 웹페이지도 만들 줄 몰랐고 이대로는 안 되겠다고 생각되어서 학원에 등록했고 거기서 DB를 이용한 Pagination에 대해 배웠다. 얼마 지나지 않아서 다행히 취업했는데, 당시에는 결국 개발자가 될 수 있었던 이유는 얼굴 인식이 아닌 게시판을 만들 수 있기 때문이라고 생각했다.
 
-최근 회사 프로젝트에서 분 단위의 슬로우 쿼리가 발생했는데, 레거시 코드에서 학원에서 처음 배웠던  방식의 DB Pagination을 발견했다. 해당 MongoDB Collection에는 약 74,380,000개의 Document가 저장되어 있었다. 아마도 원작자는 Admin 페이지이기도 했고 해당 Collection에 많은 Document가 삽입될 줄은 몰랐던 거 같다.
+최근 회사 프로젝트에서 분 단위의 슬로우 쿼리가 발생했는데, 레거시 코드에서 학원에서 처음 배웠던  방식의 DB Pagination을 발견했다. 해당 MongoDB Collection에는 약 74,380,000개의 Document가 저장되어 있었다. 아마도 원작자는 Admin 페이지이기도 했고 많은 Document가 삽입될 줄은 몰랐던 거 같다.
 
 DBA로 일하거나 DB를 직접 만들어 본 경험은 없어서 자세히 알지는 못하지만 아는 만큼이라도 DB Pagination에 대해서 적어보고 싶었다.
 
@@ -95,7 +95,7 @@ RRRRRRRRRR RRRRRRRRRR RRRRRRRRRR...
 SELECT * FROM posts WHERE title LIKE '%맛집%' OFFSET I * 10 LIMIT 10;
 ```
 
-여기서 `title` 필드의 Index가 있더라도 문제가 발생하는데, 이는 B+tree 기반 Index에서 해당 단어를 왼쪽부터 오른쪽으로 찾기 때문이다. 따라서 Index는 적합하지 않다.
+여기서 `title` 필드의 Index가 있더라도 문제가 발생하는데, 이는 B+tree 기반 Index에서 해당 단어를 왼쪽부터 오른쪽으로 찾기 때문이다. 따라서 B+tree Index는 적합하지 않다.
 
 해결 방법을 몇 가지를 생각해봐야 하는데, 먼저 스펙 축소가 있다. 특정 키워드가 "포함된"을 "시작하는"으로 변경하는 것이다. `WHERE` 뒤 `LIKE '%맛집%'`를 `LIKE '맛집%'`로 변경한다. 스펙 변경이 어렵다면 Full text search 타입 Index로 `title`을 색인한다.
 
