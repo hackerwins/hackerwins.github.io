@@ -35,6 +35,7 @@ plugins:
   - jekyll-paginate
   - jekyll-seo-tag
   - jekyll-remote-theme
+  - jekyll-redirect-from
 
 # Permalinks
 permalink:      /:year-:month-:day/:title
