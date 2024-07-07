@@ -1,6 +1,6 @@
 ---
 layout: tag_page
-title: "Tag: toy-project"
-tag: toy-project
+title: "Tag: spreadsheet"
+tag: spreadsheet
 robots: noindex
 ---
